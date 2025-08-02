@@ -1,0 +1,1203 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title><%= title %> - Mess TV Menu Display</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #f5f5f5;
+            line-height: 1.6;
+        }
+
+        .header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 1rem 2rem;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+
+        .header-content {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+        .header h1 {
+            font-size: 1.8rem;
+            font-weight: 600;
+        }
+
+        .user-info {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .user-info span {
+            font-size: 0.9rem;
+            opacity: 0.9;
+        }
+
+        .logout-btn {
+            background: rgba(255,255,255,0.2);
+            color: white;
+            border: none;
+            padding: 0.5rem 1rem;
+            border-radius: 5px;
+            cursor: pointer;
+            text-decoration: none;
+            font-size: 0.9rem;
+            transition: background-color 0.3s ease;
+        }
+
+        .logout-btn:hover {
+            background: rgba(255,255,255,0.3);
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 2rem auto;
+            padding: 0 2rem;
+        }
+
+        .page-header {
+            background: white;
+            border-radius: 10px;
+            padding: 2rem;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            margin-bottom: 2rem;
+        }
+
+        .header-top {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1.5rem;
+            flex-wrap: wrap;
+            gap: 1rem;
+        }
+
+        .page-title {
+            color: #333;
+            font-size: 1.8rem;
+            margin: 0;
+        }
+
+        .header-actions {
+            display: flex;
+            gap: 1rem;
+            align-items: center;
+        }
+
+        .btn {
+            padding: 0.6rem 1.2rem;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 0.9rem;
+            font-weight: 500;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            transition: all 0.3s ease;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.3);
+        }
+
+        .btn-secondary {
+            background: #6c757d;
+            color: white;
+        }
+
+        .btn-success {
+            background: #28a745;
+            color: white;
+        }
+
+        .btn-sm {
+            padding: 0.4rem 0.8rem;
+            font-size: 0.8rem;
+        }
+
+        .date-filters {
+            display: flex;
+            gap: 1rem;
+            align-items: center;
+            flex-wrap: wrap;
+        }
+
+        .filter-group {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .filter-input {
+            padding: 0.5rem;
+            border: 2px solid #ddd;
+            border-radius: 5px;
+            font-size: 0.9rem;
+        }
+
+        .stats-row {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1rem;
+            margin-bottom: 2rem;
+        }
+
+        .stat-card {
+            background: white;
+            padding: 1.5rem;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            text-align: center;
+        }
+
+        .stat-number {
+            font-size: 2rem;
+            font-weight: 700;
+            color: #667eea;
+            display: block;
+        }
+
+        .stat-label {
+            font-size: 0.9rem;
+            color: #666;
+            margin-top: 0.5rem;
+        }
+
+        .menu-table-container {
+            background: white;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            overflow: hidden;
+        }
+
+        .table-header {
+            background: #f8f9fa;
+            padding: 1rem 1.5rem;
+            border-bottom: 1px solid #dee2e6;
+        }
+
+        .table-title {
+            font-size: 1.2rem;
+            font-weight: 600;
+            color: #333;
+            margin: 0;
+        }
+
+        .menu-table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        .menu-table th,
+        .menu-table td {
+            padding: 1rem;
+            text-align: left;
+            border-bottom: 1px solid #dee2e6;
+        }
+
+        .menu-table th {
+            background: #f8f9fa;
+            font-weight: 600;
+            color: #495057;
+            font-size: 0.9rem;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .menu-table tbody tr {
+            transition: background-color 0.2s ease;
+        }
+
+        .menu-table tbody tr:hover {
+            background: #f8f9fa;
+        }
+
+        .date-cell {
+            font-weight: 600;
+            color: #333;
+        }
+
+        .date-info {
+            display: flex;
+            flex-direction: column;
+            gap: 0.2rem;
+        }
+
+        .date-main {
+            font-size: 1rem;
+            font-weight: 600;
+        }
+
+        .date-sub {
+            font-size: 0.8rem;
+            color: #666;
+        }
+
+        .today-badge {
+            background: #28a745;
+            color: white;
+            padding: 0.2rem 0.5rem;
+            border-radius: 12px;
+            font-size: 0.7rem;
+            font-weight: 500;
+            margin-left: 0.5rem;
+        }
+
+        .past-date {
+            opacity: 0.7;
+        }
+
+        .past-date-badge {
+            background: #6c757d !important;
+            color: white !important;
+        }
+
+        .count-cell {
+            text-align: center;
+            font-weight: 600;
+        }
+
+        .count-number {
+            display: inline-block;
+            min-width: 2rem;
+            padding: 0.3rem 0.6rem;
+            border-radius: 15px;
+            font-size: 0.9rem;
+        }
+
+        .count-zero {
+            background: #f8f9fa;
+            color: #6c757d;
+        }
+
+        .count-positive {
+            background: #d4edda;
+            color: #155724;
+        }
+
+        .status-cell {
+            text-align: center;
+        }
+
+        .status-badge {
+            padding: 0.4rem 0.8rem;
+            border-radius: 15px;
+            font-size: 0.8rem;
+            font-weight: 500;
+        }
+
+        .status-complete {
+            background: #d4edda;
+            color: #155724;
+        }
+
+        .status-empty {
+            background: #f8d7da;
+            color: #721c24;
+        }
+
+        .status-pending {
+            background: #fff3cd;
+            color: #856404;
+        }
+
+        .actions-cell {
+            text-align: center;
+        }
+
+        .action-buttons {
+            display: flex;
+            gap: 0.5rem;
+            justify-content: center;
+        }
+
+        .pagination {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 1rem;
+            margin-top: 2rem;
+            padding: 1rem;
+            background: white;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+
+        .pagination-info {
+            color: #666;
+            font-size: 0.9rem;
+        }
+
+        .pagination-buttons {
+            display: flex;
+            gap: 0.5rem;
+        }
+
+        .no-data {
+            text-align: center;
+            padding: 3rem;
+            color: #666;
+            font-style: italic;
+        }
+
+        /* Mobile Responsive */
+        @media (max-width: 768px) {
+            .container {
+                padding: 0 1rem;
+                margin: 1rem auto;
+            }
+
+            .header-top {
+                flex-direction: column;
+                align-items: stretch;
+                text-align: center;
+            }
+
+            .header-actions {
+                justify-content: center;
+            }
+
+            .date-filters {
+                justify-content: center;
+            }
+
+            .stats-row {
+                grid-template-columns: repeat(2, 1fr);
+            }
+
+            .menu-table-container {
+                overflow-x: auto;
+            }
+
+            .menu-table {
+                min-width: 800px;
+            }
+
+            .action-buttons {
+                flex-direction: column;
+            }
+
+            .pagination {
+                flex-direction: column;
+                gap: 0.5rem;
+            }
+
+            .pagination-buttons {
+                order: -1;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .stats-row {
+                grid-template-columns: 1fr;
+            }
+
+            .date-filters {
+                flex-direction: column;
+                align-items: stretch;
+            }
+
+            .filter-group {
+                justify-content: space-between;
+            }
+        }
+
+        /* Modal Styles */
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 1000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0,0,0,0.5);
+            overflow-y: auto;
+        }
+
+        .modal-content {
+            background-color: white;
+            margin: 5vh auto;
+            padding: 30px;
+            border-radius: 10px;
+            width: 90%;
+            max-width: 600px;
+            position: relative;
+            max-height: 90vh;
+            overflow-y: auto;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.3);
+        }
+
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+            padding-bottom: 15px;
+            border-bottom: 1px solid #eee;
+        }
+
+        .modal-title {
+            font-size: 1.5rem;
+            font-weight: 600;
+            color: #333;
+            margin: 0;
+        }
+
+        .close {
+            color: #aaa;
+            font-size: 28px;
+            font-weight: bold;
+            cursor: pointer;
+            line-height: 1;
+        }
+
+        .close:hover,
+        .close:focus {
+            color: #000;
+        }
+
+        .modal-body {
+            margin-bottom: 20px;
+        }
+
+        .modal-footer {
+            display: flex;
+            justify-content: flex-end;
+            gap: 10px;
+            padding-top: 15px;
+            border-top: 1px solid #eee;
+        }
+
+        /* Copy Modal Specific Styles */
+        .form-group {
+            margin-bottom: 1rem;
+        }
+
+        .form-label {
+            display: block;
+            font-weight: 600;
+            color: #333;
+            margin-bottom: 0.5rem;
+        }
+
+        .form-input {
+            width: 100%;
+            padding: 0.75rem;
+            border: 2px solid #ddd;
+            border-radius: 5px;
+            font-size: 1rem;
+            transition: border-color 0.3s ease;
+        }
+
+        .form-input:focus {
+            outline: none;
+            border-color: #667eea;
+        }
+
+        .form-help {
+            color: #666;
+            font-size: 0.8rem;
+            margin-top: 0.25rem;
+        }
+
+        .copy-info {
+            background: #f8f9fa;
+            padding: 1rem;
+            border-radius: 5px;
+            margin-bottom: 1rem;
+        }
+
+        .copy-info p {
+            margin: 0.5rem 0;
+        }
+
+        .copy-options {
+            margin: 1rem 0;
+        }
+
+        .copy-options h4 {
+            margin-bottom: 0.5rem;
+            color: #333;
+        }
+
+        .option-group {
+            margin: 0.5rem 0;
+        }
+
+        .checkbox-label {
+            display: flex;
+            align-items: center;
+            cursor: pointer;
+            font-size: 0.9rem;
+        }
+
+        .checkbox-label input[type="checkbox"] {
+            margin-right: 0.5rem;
+        }
+
+        .warning-box {
+            background: #fff3cd;
+            border: 1px solid #ffeaa7;
+            border-radius: 5px;
+            padding: 1rem;
+            margin: 1rem 0;
+        }
+
+        .warning-box h4 {
+            color: #856404;
+            margin: 0 0 0.5rem 0;
+        }
+
+        .warning-box p {
+            color: #856404;
+            margin: 0;
+        }
+    </style>
+</head>
+<body>
+    <header class="header">
+        <div class="header-content">
+            <h1>Menu Management</h1>
+            <div class="user-info">
+                <span>Welcome, <%= user.username %></span>
+                <a href="/admin/logout" class="logout-btn">Logout</a>
+            </div>
+        </div>
+    </header>
+
+    <div class="container">
+        <%- include('partials/navigation') %>
+
+        <div class="page-header">
+            <div class="header-top">
+                <h2 class="page-title">📅 Menu Overview</h2>
+                <div class="header-actions">
+                    <a href="/admin/menu/date/<%= todayDate %>" class="btn btn-success">
+                        ➕ Add Today's Menu
+                    </a>
+                    <button onclick="showDatePicker()" class="btn btn-primary">
+                        📅 Add Menu for Date
+                    </button>
+                    <button onclick="showBulkImportModal()" class="btn btn-success">
+                        📥 Bulk Import
+                    </button>
+                </div>
+            </div>
+
+            <div class="date-filters">
+                <div class="filter-group">
+                    <label>From:</label>
+                    <input type="date" id="startDate" class="filter-input" value="<%= dateRange.startDate %>">
+                </div>
+                <div class="filter-group">
+                    <label>To:</label>
+                    <input type="date" id="endDate" class="filter-input" value="<%= dateRange.endDate %>">
+                </div>
+                <button onclick="applyDateFilter()" class="btn btn-secondary btn-sm">Apply Filter</button>
+                <button onclick="resetDateFilter()" class="btn btn-secondary btn-sm">Reset</button>
+                <button onclick="showPastDates()" class="btn btn-secondary btn-sm">📅 View Past Dates</button>
+            </div>
+        </div>
+
+        <!-- Statistics Row -->
+        <div class="stats-row">
+            <div class="stat-card">
+                <span class="stat-number"><%= tableData.filter(d => d.status === 'complete').length %></span>
+                <div class="stat-label">Days with Menu</div>
+            </div>
+            <div class="stat-card">
+                <span class="stat-number"><%= tableData.filter(d => d.status === 'empty').length %></span>
+                <div class="stat-label">Empty Days</div>
+            </div>
+            <div class="stat-card">
+                <span class="stat-number"><%= tableData.reduce((sum, d) => sum + d.total, 0) %></span>
+                <div class="stat-label">Total Items</div>
+            </div>
+            <div class="stat-card">
+                <span class="stat-number"><%= tableData.reduce((sum, d) => sum + d.nutritionCompleted, 0) %></span>
+                <div class="stat-label">Items with Nutrition</div>
+            </div>
+            <div class="stat-card">
+                <span class="stat-number"><%= Math.round(tableData.reduce((sum, d) => sum + d.total, 0) / Math.max(tableData.filter(d => d.status === 'complete').length, 1)) %></span>
+                <div class="stat-label">Avg Items/Day</div>
+            </div>
+            <div class="stat-card">
+                <span class="stat-number"><%= tableData.reduce((sum, d) => sum + d.total, 0) > 0 ? Math.round((tableData.reduce((sum, d) => sum + d.nutritionCompleted, 0) / tableData.reduce((sum, d) => sum + d.total, 0)) * 100) : 0 %>%</span>
+                <div class="stat-label">Nutrition Completion</div>
+            </div>
+        </div>
+
+        <!-- Menu Table -->
+        <div class="menu-table-container">
+            <div class="table-header">
+                <h3 class="table-title">Menu Schedule</h3>
+            </div>
+
+            <% if (tableData && tableData.length > 0) { %>
+                <table class="menu-table">
+                    <thead>
+                        <tr>
+                            <th>Date</th>
+                            <th>🌅 Breakfast</th>
+                            <th>🌞 Lunch</th>
+                            <th>🍿 Snacks</th>
+                            <th>🌙 Dinner</th>
+                            <th>Total</th>
+                            <th>Menu Status</th>
+                            <th>Nutrition Status</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <% tableData.forEach(row => { %>
+                            <tr class="<%= row.isPast ? 'past-date' : '' %>">
+                                <td class="date-cell">
+                                    <div class="date-info">
+                                        <div class="date-main">
+                                            <%= row.formattedDate %>
+                                            <% if (row.isToday) { %>
+                                                <span class="today-badge">Today</span>
+                                            <% } %>
+                                        </div>
+                                        <div class="date-sub"><%= row.dayName %></div>
+                                    </div>
+                                </td>
+                                <td class="count-cell">
+                                    <span class="count-number <%= row.breakfast > 0 ? 'count-positive' : 'count-zero' %>">
+                                        <%= row.breakfast %>
+                                    </span>
+                                </td>
+                                <td class="count-cell">
+                                    <span class="count-number <%= row.lunch > 0 ? 'count-positive' : 'count-zero' %>">
+                                        <%= row.lunch %>
+                                    </span>
+                                </td>
+                                <td class="count-cell">
+                                    <span class="count-number <%= row.snacks > 0 ? 'count-positive' : 'count-zero' %>">
+                                        <%= row.snacks %>
+                                    </span>
+                                </td>
+                                <td class="count-cell">
+                                    <span class="count-number <%= row.dinner > 0 ? 'count-positive' : 'count-zero' %>">
+                                        <%= row.dinner %>
+                                    </span>
+                                </td>
+                                <td class="count-cell">
+                                    <strong><%= row.total %></strong>
+                                </td>
+                                <td class="status-cell">
+                                    <span class="status-badge status-<%= row.status %>">
+                                        <%= row.status === 'complete' ? '✅ Complete' : '⚪ Empty' %>
+                                    </span>
+                                </td>
+                                <td class="status-cell">
+                                    <span class="status-badge status-<%= row.nutritionStatus %>">
+                                        <% if (row.nutritionStatus === 'complete') { %>
+                                            ✅ Complete (<%= row.nutritionCompleted %>/<%= row.total %>)
+                                        <% } else { %>
+                                            ⏳ Pending (<%= row.nutritionCompleted %>/<%= row.total %>)
+                                        <% } %>
+                                    </span>
+                                </td>
+                                <td class="actions-cell">
+                                    <div class="action-buttons">
+                                        <% if (row.isPast) { %>
+                                            <a href="/admin/menu/date/<%= row.dateStr %>?readonly=true" class="btn btn-secondary btn-sm">
+                                                👁️ View Only
+                                            </a>
+                                        <% } else { %>
+                                            <a href="/admin/menu/date/<%= row.dateStr %>" class="btn btn-primary btn-sm">
+                                                👁️ Manage
+                                            </a>
+                                        <% } %>
+                                        <% if (row.total > 0) { %>
+                                            <button onclick="copyMenu('<%= row.dateStr %>')" class="btn btn-secondary btn-sm">
+                                                📋 Copy
+                                            </button>
+                                            <a href="/admin/nutrition/date/<%= row.dateStr %>" class="btn btn-success btn-sm">
+                                                🍎 Nutrition
+                                            </a>
+                                        <% } %>
+                                    </div>
+                                </td>
+                            </tr>
+                        <% }); %>
+                    </tbody>
+                </table>
+            <% } else { %>
+                <div class="no-data">
+                    No menu data found for the selected date range.
+                </div>
+            <% } %>
+        </div>
+
+        <!-- Pagination -->
+        <% if (pagination.totalPages > 1) { %>
+            <div class="pagination">
+                <div class="pagination-info">
+                    Page <%= pagination.currentPage %> of <%= pagination.totalPages %>
+                </div>
+                <div class="pagination-buttons">
+                    <% if (pagination.hasPrevPage) { %>
+                        <a href="?page=<%= pagination.currentPage - 1 %>&startDate=<%= dateRange.startDate %>&endDate=<%= dateRange.endDate %>" 
+                           class="btn btn-secondary btn-sm">← Previous</a>
+                    <% } %>
+                    <% if (pagination.hasNextPage) { %>
+                        <a href="?page=<%= pagination.currentPage + 1 %>&startDate=<%= dateRange.startDate %>&endDate=<%= dateRange.endDate %>" 
+                           class="btn btn-secondary btn-sm">Next →</a>
+                    <% } %>
+                </div>
+            </div>
+        <% } %>
+    </div>
+
+    <!-- Date Picker Modal -->
+    <div id="datePicker" class="modal" style="display: none;">
+        <div class="modal-content" style="max-width: 400px; margin: 10% auto; padding: 2rem; background: white; border-radius: 10px; box-shadow: 0 4px 20px rgba(0,0,0,0.3);">
+            <h3 style="margin-bottom: 1rem; color: #333;">Select Date for Menu</h3>
+            <div style="margin-bottom: 1rem;">
+                <label style="display: block; margin-bottom: 0.5rem; font-weight: 600;">Date:</label>
+                <input type="date" id="selectedDate" style="width: 100%; padding: 0.75rem; border: 2px solid #ddd; border-radius: 5px;" 
+                       min="<%= todayDate %>" value="<%= todayDate %>">
+            </div>
+            <div style="display: flex; gap: 1rem; justify-content: flex-end;">
+                <button onclick="closeDatePicker()" class="btn btn-secondary">Cancel</button>
+                <button onclick="goToSelectedDate()" class="btn btn-primary">Go to Date</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Copy Menu Modal -->
+    <div id="copyModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 class="modal-title">📋 Copy Menu Items</h3>
+                <span class="close" onclick="closeModal('copyModal')">&times;</span>
+            </div>
+            <div class="modal-body">
+                <div class="copy-info">
+                    <p><strong>Source Date:</strong> <span id="copySourceDate"></span></p>
+                    <p><strong>Items to Copy:</strong> <span id="copyItemCount"></span></p>
+                </div>
+                
+                <div class="form-group">
+                    <label class="form-label">Target Date *</label>
+                    <input type="date" id="copyTargetDate" class="form-input" required>
+                    <small class="form-help">Select the date where you want to copy the menu items</small>
+                </div>
+
+                <div class="copy-options">
+                    <h4>Copy Options:</h4>
+                    <div class="option-group">
+                        <label class="checkbox-label">
+                            <input type="checkbox" id="copyNutrition" checked>
+                            <span class="checkmark"></span>
+                            Include nutrition data
+                        </label>
+                    </div>
+                    <div class="option-group">
+                        <label class="checkbox-label">
+                            <input type="checkbox" id="copyDescription" checked>
+                            <span class="checkmark"></span>
+                            Include descriptions
+                        </label>
+                    </div>
+                </div>
+
+                <div class="warning-box" id="copyWarning" style="display: none;">
+                    <h4>⚠️ Warning</h4>
+                    <p>The target date already has menu items. Copying will replace existing items.</p>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" onclick="closeModal('copyModal')" class="btn btn-secondary">Cancel</button>
+                <button type="button" onclick="executeCopy()" class="btn btn-success">Copy Menu Items</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Bulk Import Modal -->
+    <div id="bulkImportModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 class="modal-title">📥 Bulk Import Menu Items</h3>
+                <span class="close" onclick="closeBulkImportModal()">&times;</span>
+            </div>
+            
+            <div class="modal-body">
+                <div style="margin-bottom: 1.5rem;">
+                    <h4 style="margin-bottom: 0.5rem; color: #555;">CSV Format Requirements:</h4>
+                    <div style="background: #f8f9fa; padding: 1rem; border-radius: 5px; font-size: 0.9rem;">
+                        <p><strong>Required columns:</strong> name, category, date</p>
+                        <p><strong>Optional nutrition columns:</strong> calories, protein, carbohydrates, fat, fiber</p>
+                        <p><strong>Other optional columns:</strong> description, isactive</p>
+                        <p><strong>Categories:</strong> breakfast, lunch, snacks, dinner</p>
+                        <p><strong>Date format:</strong> YYYY-MM-DD (e.g., 2025-07-27) or DD-MM-YYYY (e.g., 27-07-2025)</p>
+                        <p><strong>Nutrition data:</strong> If provided, all nutrition fields must be complete. Items without nutrition data will be marked as "pending" for later completion.</p>
+                    </div>
+                </div>
+
+                <div style="margin-bottom: 1.5rem;">
+                    <label style="display: block; margin-bottom: 0.5rem; font-weight: 600;">Select CSV File:</label>
+                    <input type="file" id="csvFile" accept=".csv" style="width: 100%; padding: 0.75rem; border: 2px solid #ddd; border-radius: 5px;">
+                </div>
+
+                <div id="importProgress" style="display: none; margin-bottom: 1rem;">
+                    <div style="background: #e9ecef; border-radius: 5px; overflow: hidden;">
+                        <div id="progressBar" style="height: 20px; background: #28a745; width: 0%; transition: width 0.3s ease;"></div>
+                    </div>
+                    <p id="progressText" style="text-align: center; margin-top: 0.5rem; font-size: 0.9rem;">Processing...</p>
+                </div>
+
+                <div id="importResults" style="display: none; margin-bottom: 1rem;">
+                    <div id="resultsContent"></div>
+                </div>
+            </div>
+
+            <div class="modal-footer">
+                <button onclick="closeBulkImportModal()" class="btn btn-secondary">Cancel</button>
+                <button onclick="downloadSampleCSV()" class="btn btn-secondary">📄 Download Sample</button>
+                <button onclick="processBulkImport()" class="btn btn-primary">📥 Import</button>
+            </div>
+        </div>
+    </div>
+
+
+
+    <script>
+
+
+        function applyDateFilter() {
+            const startDate = document.getElementById('startDate').value;
+            const endDate = document.getElementById('endDate').value;
+            
+            if (startDate && endDate) {
+                window.location.href = `/admin/menu?startDate=${startDate}&endDate=${endDate}`;
+            } else {
+                alert('Please select both start and end dates');
+            }
+        }
+
+        function resetDateFilter() {
+            window.location.href = '/admin/menu';
+        }
+
+        function showPastDates() {
+            const today = new Date().toISOString().split('T')[0];
+            const pastStartDate = new Date();
+            pastStartDate.setDate(pastStartDate.getDate() - 30);
+            const pastStartStr = pastStartDate.toISOString().split('T')[0];
+            
+            document.getElementById('startDate').value = pastStartStr;
+            document.getElementById('endDate').value = today;
+            
+            window.location.href = `/admin/menu?startDate=${pastStartStr}&endDate=${today}`;
+        }
+
+        function showDatePicker() {
+            document.getElementById('datePicker').style.display = 'block';
+        }
+
+        function closeDatePicker() {
+            document.getElementById('datePicker').style.display = 'none';
+        }
+
+        function goToSelectedDate() {
+            const selectedDate = document.getElementById('selectedDate').value;
+            if (selectedDate) {
+                window.location.href = `/admin/menu/date/${selectedDate}`;
+            }
+        }
+
+        function copyMenu(dateStr) {
+            showCopyModal(dateStr);
+        }
+
+        function showCopyModal(sourceDate) {
+            // Set modal content
+            document.getElementById('copySourceDate').textContent = sourceDate;
+            document.getElementById('copyItemCount').textContent = 'Loading...';
+            
+            // Set default target date to tomorrow
+            const tomorrow = new Date();
+            tomorrow.setDate(tomorrow.getDate() + 1);
+            document.getElementById('copyTargetDate').value = tomorrow.toISOString().split('T')[0];
+            
+            // Reset form
+            document.getElementById('copyNutrition').checked = true;
+            document.getElementById('copyDescription').checked = true;
+            document.getElementById('copyWarning').style.display = 'none';
+            
+            // Show modal
+            document.getElementById('copyModal').style.display = 'block';
+            
+            // Add event listener for target date change
+            const targetDateInput = document.getElementById('copyTargetDate');
+            targetDateInput.removeEventListener('change', checkExistingItems);
+            targetDateInput.addEventListener('change', checkExistingItems);
+        }
+
+        function checkExistingItems() {
+            const targetDate = document.getElementById('copyTargetDate').value;
+            const warningBox = document.getElementById('copyWarning');
+            
+            if (!targetDate) {
+                warningBox.style.display = 'none';
+                return;
+            }
+            
+            // Check if target date is in the past
+            const today = new Date().toISOString().split('T')[0];
+            if (targetDate <= today) {
+                warningBox.style.display = 'block';
+                warningBox.querySelector('p').textContent = 'Warning: Target date is today or in the past.';
+            } else {
+                warningBox.style.display = 'none';
+            }
+        }
+
+        function executeCopy() {
+            const sourceDate = document.getElementById('copySourceDate').textContent;
+            const targetDate = document.getElementById('copyTargetDate').value;
+            
+            if (!targetDate) {
+                alert('Please select a target date');
+                return;
+            }
+            
+            // Validate target date is not in the past
+            const today = new Date().toISOString().split('T')[0];
+            if (targetDate < today) {
+                if (!confirm('You are copying to a past date. Are you sure you want to continue?')) {
+                    return;
+                }
+            }
+            
+            // Show loading state
+            const copyButton = document.querySelector('#copyModal .btn-success');
+            const originalText = copyButton.textContent;
+            copyButton.textContent = 'Copying...';
+            copyButton.disabled = true;
+            
+            fetch('/admin/menu/copy', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({
+                    fromDate: sourceDate,
+                    toDate: targetDate
+                })
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    closeModal('copyModal');
+                    
+                    // Show success message with options
+                    const message = `Successfully copied ${data.data.itemCount} menu items to ${targetDate}`;
+                    if (confirm(message + '\n\nWould you like to view the copied menu?')) {
+                        window.location.href = `/admin/menu/date/${targetDate}`;
+                    } else {
+                        location.reload();
+                    }
+                } else {
+                    alert('Error: ' + data.error);
+                }
+            })
+            .catch(error => {
+                alert('An error occurred while copying the menu');
+            })
+            .finally(() => {
+                // Reset button state
+                copyButton.textContent = originalText;
+                copyButton.disabled = false;
+            });
+        }
+
+        function closeModal(modalId) {
+            document.getElementById(modalId).style.display = 'none';
+            
+            if (modalId === 'copyModal') {
+                // Reset copy modal
+                document.getElementById('copyTargetDate').value = '';
+                document.getElementById('copyNutrition').checked = true;
+                document.getElementById('copyDescription').checked = true;
+                document.getElementById('copyWarning').style.display = 'none';
+            }
+        }
+
+        // Close modal when clicking outside
+        window.onclick = function(event) {
+            const modal = document.getElementById('datePicker');
+            const bulkModal = document.getElementById('bulkImportModal');
+            const copyModal = document.getElementById('copyModal');
+            if (event.target === modal) {
+                modal.style.display = 'none';
+            }
+            if (event.target === bulkModal) {
+                bulkModal.style.display = 'none';
+            }
+            if (event.target === copyModal) {
+                copyModal.style.display = 'none';
+            }
+        }
+
+        // Bulk Import Functions
+        function showBulkImportModal() {
+            document.getElementById('bulkImportModal').style.display = 'block';
+            document.getElementById('importProgress').style.display = 'none';
+            document.getElementById('importResults').style.display = 'none';
+            document.getElementById('csvFile').value = '';
+        }
+
+
+
+        function closeBulkImportModal() {
+            document.getElementById('bulkImportModal').style.display = 'none';
+            document.getElementById('csvFile').value = '';
+            document.getElementById('importProgress').style.display = 'none';
+            document.getElementById('importResults').style.display = 'none';
+        }
+
+
+
+        function downloadSampleCSV() {
+            // Download the sample CSV file from the server
+            const a = document.createElement('a');
+            a.href = '/sample_menu_items.csv';
+            a.download = 'menu_items_sample.csv';
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+        }
+
+
+
+
+
+
+
+        function processBulkImport() {
+            const fileInput = document.getElementById('csvFile');
+            const file = fileInput.files[0];
+            
+            if (!file) {
+                alert('Please select a CSV file');
+                return;
+            }
+
+            if (!file.name.endsWith('.csv')) {
+                alert('Please select a valid CSV file');
+                return;
+            }
+
+            const formData = new FormData();
+            formData.append('csvFile', file);
+
+            // Show progress
+            document.getElementById('importProgress').style.display = 'block';
+            document.getElementById('progressBar').style.width = '50%';
+            document.getElementById('progressText').textContent = 'Uploading and processing file...';
+
+            fetch('/api/menu-items/bulk-import', {
+                method: 'POST',
+                body: formData
+            })
+            .then(response => response.json())
+            .then(data => {
+                document.getElementById('progressBar').style.width = '100%';
+                document.getElementById('progressText').textContent = 'Import completed!';
+                
+                // Show results
+                const resultsDiv = document.getElementById('importResults');
+                const contentDiv = document.getElementById('resultsContent');
+                
+                if (data.success) {
+                    contentDiv.innerHTML = `
+                        <div style="background: #d4edda; border: 1px solid #c3e6cb; border-radius: 5px; padding: 1rem; margin-bottom: 1rem;">
+                            <h4 style="color: #155724; margin-bottom: 0.5rem;">✅ Import Successful</h4>
+                            <p style="margin: 0;"><strong>Total items:</strong> ${data.data.total}</p>
+                            <p style="margin: 0;"><strong>Successfully imported:</strong> ${data.data.successful}</p>
+                            <p style="margin: 0;"><strong>Failed:</strong> ${data.data.failed}</p>
+                            <p style="margin: 0;"><strong>With nutrition data:</strong> ${data.data.withNutrition}</p>
+                            <p style="margin: 0;"><strong>Pending nutrition:</strong> ${data.data.withoutNutrition}</p>
+                        </div>
+                    `;
+                    
+                    if (data.data.errors.length > 0) {
+                        contentDiv.innerHTML += `
+                            <div style="background: #f8d7da; border: 1px solid #f5c6cb; border-radius: 5px; padding: 1rem;">
+                                <h4 style="color: #721c24; margin-bottom: 0.5rem;">❌ Import Errors</h4>
+                                <div style="max-height: 200px; overflow-y: auto;">
+                                    ${data.data.errors.map(error => `
+                                        <div style="margin-bottom: 0.5rem; padding: 0.5rem; background: #f8f9fa; border-radius: 3px;">
+                                            <strong>Row ${error.row}:</strong> ${error.error}
+                                        </div>
+                                    `).join('')}
+                                </div>
+                            </div>
+                        `;
+                    }
+                } else {
+                    contentDiv.innerHTML = `
+                        <div style="background: #f8d7da; border: 1px solid #f5c6cb; border-radius: 5px; padding: 1rem;">
+                            <h4 style="color: #721c24; margin-bottom: 0.5rem;">❌ Import Failed</h4>
+                            <p style="margin: 0;">${data.error}</p>
+                        </div>
+                    `;
+                }
+                
+                resultsDiv.style.display = 'block';
+                
+                // Reload page after 3 seconds if successful
+                if (data.success && data.data.successful > 0) {
+                    setTimeout(() => {
+                        location.reload();
+                    }, 3000);
+                }
+            })
+            .catch(error => {
+                document.getElementById('progressBar').style.width = '0%';
+                document.getElementById('progressText').textContent = 'Import failed!';
+                
+                const resultsDiv = document.getElementById('importResults');
+                const contentDiv = document.getElementById('resultsContent');
+                contentDiv.innerHTML = `
+                    <div style="background: #f8d7da; border: 1px solid #f5c6cb; border-radius: 5px; padding: 1rem;">
+                        <h4 style="color: #721c24; margin-bottom: 0.5rem;">❌ Import Failed</h4>
+                        <p style="margin: 0;">An error occurred during import. Please try again.</p>
+                    </div>
+                `;
+                resultsDiv.style.display = 'block';
+            });
+        }
+
+
+    </script>
+</body>
+</html>

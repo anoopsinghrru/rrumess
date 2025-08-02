@@ -1,0 +1,607 @@
+<%- include('partials/navigation') %>
+
+<div class="modern-dashboard">
+  <!-- Hero Header -->
+  <div class="hero-section">
+    <div class="container-fluid">
+      <div class="hero-content">
+        <div class="hero-text">
+          <h1 class="hero-title">
+            <span class="gradient-text">
+              <%= isEdit ? 'Edit User' : 'Create New User' %>
+            </span>
+          </h1>
+          <p class="hero-subtitle">
+            <%= isEdit ? 'Update user information and permissions' : 'Add a new user to the system' %>
+          </p>
+        </div>
+        <div class="hero-action">
+          <a href="/admin/users" class="btn-back">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <polyline points="15,18 9,12 15,6"></polyline>
+            </svg>
+            Back to Users
+          </a>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Main Content -->
+  <div class="main-content">
+    <div class="container-fluid">
+      <div class="form-container">
+        <div class="form-card">
+          <div class="form-header">
+            <h3>
+              <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
+                <circle cx="12" cy="7" r="4"></circle>
+              </svg>
+              User Information
+            </h3>
+          </div>
+          
+          <div class="form-body">
+            <% if (typeof error !== 'undefined' && error) { %>
+              <div class="alert-error">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <circle cx="12" cy="12" r="10"></circle>
+                  <line x1="15" y1="9" x2="9" y2="15"></line>
+                  <line x1="9" y1="9" x2="15" y2="15"></line>
+                </svg>
+                <span><%= error %></span>
+              </div>
+            <% } %>
+
+            <form method="POST" action="<%= isEdit ? `/admin/users/${formData._id}?_method=PUT` : '/admin/users' %>">
+              <!-- Basic Information Section -->
+              <div class="form-section">
+                <h4 class="section-title">
+                  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
+                    <circle cx="12" cy="7" r="4"></circle>
+                  </svg>
+                  Basic Information
+                </h4>
+                
+                <div class="form-row">
+                  <div class="form-group">
+                    <label for="username">
+                      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
+                        <circle cx="12" cy="7" r="4"></circle>
+                      </svg>
+                      Username *
+                    </label>
+                    <input type="text" id="username" name="username" 
+                           value="<%= formData.username || '' %>" required
+                           pattern="[a-zA-Z0-9_]+" minlength="3" maxlength="30"
+                           <%= isEdit ? 'readonly' : '' %>>
+                    <small>Only letters, numbers, and underscores allowed (3-30 characters)</small>
+                  </div>
+                  
+                  <div class="form-group">
+                    <label for="email">
+                      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"></path>
+                        <polyline points="22,6 12,13 2,6"></polyline>
+                      </svg>
+                      Email *
+                    </label>
+                    <input type="email" id="email" name="email" 
+                           value="<%= formData.email || '' %>" required>
+                  </div>
+                </div>
+
+                <div class="form-group">
+                  <label for="fullName">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                      <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
+                      <circle cx="12" cy="7" r="4"></circle>
+                    </svg>
+                    Full Name *
+                  </label>
+                  <input type="text" id="fullName" name="fullName" 
+                         value="<%= formData.fullName || '' %>" required maxlength="100">
+                </div>
+              </div>
+
+              <!-- Role and Status Section -->
+              <div class="form-section">
+                <h4 class="section-title">
+                  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"></path>
+                  </svg>
+                  Role & Status
+                </h4>
+                
+                <div class="form-row">
+                  <div class="form-group">
+                    <label for="role">
+                      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"></path>
+                      </svg>
+                      Role *
+                    </label>
+                    <select id="role" name="role" required>
+                      <option value="">Select Role</option>
+                      <% Object.entries(roles).forEach(([key, role]) => { %>
+                        <option value="<%= key %>" <%= formData.role === key ? 'selected' : '' %>>
+                          <%= role.name %>
+                        </option>
+                      <% }); %>
+                    </select>
+                    <div class="permissions-preview">
+                      <strong>Permissions:</strong>
+                      <div id="rolePermissions" class="permissions-list">
+                        <% if (formData.role && roles[formData.role]) { %>
+                          <% roles[formData.role].permissions.forEach(permission => { %>
+                            <span class="permission-tag"><%= permission %></span>
+                          <% }); %>
+                        <% } %>
+                      </div>
+                    </div>
+                  </div>
+                  
+                  <% if (isEdit) { %>
+                    <div class="form-group">
+                      <label for="isActive">
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                          <circle cx="12" cy="12" r="10"></circle>
+                          <polyline points="10,8 16,12 10,16"></polyline>
+                        </svg>
+                        Status
+                      </label>
+                      <select id="isActive" name="isActive">
+                        <option value="true" <%= formData.isActive ? 'selected' : '' %>>Active</option>
+                        <option value="false" <%= !formData.isActive ? 'selected' : '' %>>Inactive</option>
+                      </select>
+                    </div>
+                  <% } %>
+                </div>
+              </div>
+
+              <!-- Password Section -->
+              <div class="form-section">
+                <h4 class="section-title">
+                  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect>
+                    <circle cx="12" cy="16" r="1"></circle>
+                    <path d="M7 11V7a5 5 0 0 1 10 0v4"></path>
+                  </svg>
+                  Password
+                </h4>
+                
+                <div class="form-row">
+                  <div class="form-group">
+                    <label for="password">
+                      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect>
+                        <circle cx="12" cy="16" r="1"></circle>
+                        <path d="M7 11V7a5 5 0 0 1 10 0v4"></path>
+                      </svg>
+                      Password <%= isEdit ? '' : '*' %>
+                    </label>
+                    <input type="password" id="password" name="password" 
+                           <%= isEdit ? '' : 'required' %> minlength="6">
+                    <small>
+                      <% if (isEdit) { %>
+                        Leave blank to keep current password
+                      <% } else { %>
+                        Minimum 6 characters
+                      <% } %>
+                    </small>
+                  </div>
+                  
+                  <div class="form-group">
+                    <label for="confirmPassword">
+                      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect>
+                        <circle cx="12" cy="16" r="1"></circle>
+                        <path d="M7 11V7a5 5 0 0 1 10 0v4"></path>
+                      </svg>
+                      Confirm Password <%= isEdit ? '' : '*' %>
+                    </label>
+                    <input type="password" id="confirmPassword" name="confirmPassword" 
+                           <%= isEdit ? '' : 'required' %> minlength="6">
+                  </div>
+                </div>
+              </div>
+
+              <!-- Action Buttons -->
+              <div class="form-actions">
+                <a href="/admin/users" class="btn-secondary">
+                  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <line x1="18" y1="6" x2="6" y2="18"></line>
+                    <line x1="6" y1="6" x2="18" y2="18"></line>
+                  </svg>
+                  Cancel
+                </a>
+                <button type="submit" class="btn-primary">
+                  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <% if (isEdit) { %>
+                      <path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"></path>
+                      <polyline points="17,21 17,13 7,13 7,21"></polyline>
+                      <polyline points="7,3 7,8 15,8"></polyline>
+                    <% } else { %>
+                      <path d="M16 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path>
+                      <circle cx="8.5" cy="7" r="4"></circle>
+                      <line x1="20" y1="8" x2="20" y2="14"></line>
+                      <line x1="23" y1="11" x2="17" y2="11"></line>
+                    <% } %>
+                  </svg>
+                  <%= isEdit ? 'Update User' : 'Create User' %>
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<style>
+/* Modern Dashboard Styles */
+.modern-dashboard {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  min-height: 100vh;
+  padding-bottom: 2rem;
+}
+
+/* Hero Section */
+.hero-section {
+  padding: 3rem 0 2rem;
+  color: white;
+}
+
+.hero-content {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0 2rem;
+}
+
+.hero-title {
+  font-size: 3rem;
+  font-weight: 700;
+  margin: 0;
+  line-height: 1.2;
+}
+
+.gradient-text {
+  background: linear-gradient(45deg, #fff, #f0f0f0);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+.hero-subtitle {
+  font-size: 1.2rem;
+  opacity: 0.9;
+  margin: 0.5rem 0 0;
+  font-weight: 300;
+}
+
+.btn-back {
+  background: rgba(255, 255, 255, 0.2);
+  border: 2px solid rgba(255, 255, 255, 0.3);
+  color: white;
+  padding: 0.75rem 1.5rem;
+  border-radius: 12px;
+  text-decoration: none;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-weight: 600;
+  transition: all 0.3s ease;
+  backdrop-filter: blur(10px);
+}
+
+.btn-back:hover {
+  background: rgba(255, 255, 255, 0.3);
+  border-color: rgba(255, 255, 255, 0.5);
+  transform: translateY(-2px);
+  color: white;
+  text-decoration: none;
+}
+
+/* Main Content */
+.main-content {
+  max-width: 800px;
+  margin: 0 auto;
+  padding: 0 2rem;
+}
+
+.form-container {
+  display: flex;
+  justify-content: center;
+}
+
+.form-card {
+  background: white;
+  border-radius: 16px;
+  width: 100%;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+  overflow: hidden;
+}
+
+.form-header {
+  background: #f8fafc;
+  padding: 1.5rem;
+  border-bottom: 1px solid #e2e8f0;
+}
+
+.form-header h3 {
+  margin: 0;
+  color: #1f2937;
+  font-weight: 600;
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+.form-body {
+  padding: 2rem;
+}
+
+/* Alert */
+.alert-error {
+  background: #fef2f2;
+  border: 1px solid #fecaca;
+  color: #dc2626;
+  padding: 1rem;
+  border-radius: 8px;
+  margin-bottom: 2rem;
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+/* Form Sections */
+.form-section {
+  margin-bottom: 2rem;
+}
+
+.section-title {
+  color: #374151;
+  font-weight: 600;
+  margin: 0 0 1rem;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-size: 1.125rem;
+}
+
+.form-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1.5rem;
+}
+
+.form-group {
+  margin-bottom: 1.5rem;
+}
+
+.form-group label {
+  display: block;
+  margin-bottom: 0.5rem;
+  color: #374151;
+  font-weight: 500;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.form-group input,
+.form-group select {
+  width: 100%;
+  padding: 0.75rem;
+  border: 2px solid #e5e7eb;
+  border-radius: 8px;
+  font-size: 0.875rem;
+  transition: all 0.2s ease;
+  background: white;
+}
+
+.form-group input:focus,
+.form-group select:focus {
+  outline: none;
+  border-color: #667eea;
+  box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+}
+
+.form-group small {
+  display: block;
+  margin-top: 0.25rem;
+  color: #6b7280;
+  font-size: 0.75rem;
+}
+
+/* Permissions Preview */
+.permissions-preview {
+  margin-top: 0.75rem;
+  padding: 0.75rem;
+  background: #f9fafb;
+  border-radius: 6px;
+}
+
+.permissions-preview strong {
+  color: #374151;
+  font-size: 0.875rem;
+}
+
+.permissions-list {
+  margin-top: 0.5rem;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.25rem;
+}
+
+.permission-tag {
+  background: #e0e7ff;
+  color: #3730a3;
+  padding: 0.25rem 0.5rem;
+  border-radius: 4px;
+  font-size: 0.75rem;
+  font-weight: 500;
+}
+
+/* Form Actions */
+.form-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 1rem;
+  padding-top: 2rem;
+  border-top: 1px solid #e5e7eb;
+  margin-top: 2rem;
+}
+
+.btn-secondary {
+  background: #f3f4f6;
+  color: #374151;
+  border: 2px solid #e5e7eb;
+  padding: 0.75rem 1.5rem;
+  border-radius: 8px;
+  font-weight: 500;
+  text-decoration: none;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  transition: all 0.2s ease;
+}
+
+.btn-secondary:hover {
+  background: #e5e7eb;
+  color: #1f2937;
+  text-decoration: none;
+  transform: translateY(-1px);
+}
+
+.btn-primary {
+  background: #667eea;
+  color: white;
+  border: none;
+  padding: 0.75rem 1.5rem;
+  border-radius: 8px;
+  font-weight: 500;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.btn-primary:hover {
+  background: #5a6fd8;
+  transform: translateY(-1px);
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+  .hero-content {
+    flex-direction: column;
+    text-align: center;
+    gap: 2rem;
+  }
+  
+  .hero-title {
+    font-size: 2rem;
+  }
+  
+  .main-content {
+    padding: 0 1rem;
+  }
+  
+  .form-body {
+    padding: 1.5rem;
+  }
+  
+  .form-row {
+    grid-template-columns: 1fr;
+    gap: 1rem;
+  }
+  
+  .form-actions {
+    flex-direction: column;
+  }
+}
+</style>
+
+<script>
+// Update role permissions when role changes
+document.getElementById('role').addEventListener('change', function() {
+  const roleKey = this.value;
+  const permissionsDiv = document.getElementById('rolePermissions');
+  
+  if (roleKey) {
+    const roles = <%- JSON.stringify(roles) %>;
+    const role = roles[roleKey];
+    
+    if (role && role.permissions) {
+      permissionsDiv.innerHTML = role.permissions.map(permission => 
+        `<span class="permission-tag">${permission}</span>`
+      ).join('');
+    } else {
+      permissionsDiv.innerHTML = '<span class="permission-tag">No permissions</span>';
+    }
+  } else {
+    permissionsDiv.innerHTML = '<span class="permission-tag">Select a role to see permissions</span>';
+  }
+});
+
+// Password confirmation validation
+document.getElementById('confirmPassword').addEventListener('input', function() {
+  const password = document.getElementById('password').value;
+  const confirmPassword = this.value;
+  
+  if (password && confirmPassword && password !== confirmPassword) {
+    this.setCustomValidity('Passwords do not match');
+    this.style.borderColor = '#dc2626';
+  } else {
+    this.setCustomValidity('');
+    this.style.borderColor = '#e5e7eb';
+  }
+});
+
+document.getElementById('password').addEventListener('input', function() {
+  const confirmPassword = document.getElementById('confirmPassword');
+  if (confirmPassword.value) {
+    confirmPassword.dispatchEvent(new Event('input'));
+  }
+});
+
+// Form validation
+document.querySelector('form').addEventListener('submit', function(e) {
+  const password = document.getElementById('password').value;
+  const confirmPassword = document.getElementById('confirmPassword').value;
+  
+  if (password && confirmPassword && password !== confirmPassword) {
+    e.preventDefault();
+    alert('Passwords do not match!');
+    return false;
+  }
+  
+  if (password && password.length < 6) {
+    e.preventDefault();
+    alert('Password must be at least 6 characters long!');
+    return false;
+  }
+});
+
+// Add smooth animations
+document.addEventListener('DOMContentLoaded', function() {
+  // Animate form card
+  const formCard = document.querySelector('.form-card');
+  formCard.style.opacity = '0';
+  formCard.style.transform = 'translateY(20px)';
+  setTimeout(() => {
+    formCard.style.transition = 'all 0.5s ease';
+    formCard.style.opacity = '1';
+    formCard.style.transform = 'translateY(0)';
+  }, 100);
+});
+</script> 

@@ -1,0 +1,691 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title><%= title %> - Mess TV Menu Display</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #f5f5f5;
+            line-height: 1.6;
+        }
+
+        .header {
+            background: linear-gradient(135deg, #dc3545 0%, #c82333 100%);
+            color: white;
+            padding: 1rem 2rem;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+
+        .header-content {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+        .header h1 {
+            font-size: 1.8rem;
+            font-weight: 600;
+        }
+
+        .user-info {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .user-info span {
+            font-size: 0.9rem;
+            opacity: 0.9;
+        }
+
+        .logout-btn {
+            background: rgba(255,255,255,0.2);
+            color: white;
+            border: none;
+            padding: 0.5rem 1rem;
+            border-radius: 5px;
+            cursor: pointer;
+            text-decoration: none;
+            font-size: 0.9rem;
+            transition: background-color 0.3s ease;
+        }
+
+        .logout-btn:hover {
+            background: rgba(255,255,255,0.3);
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 2rem auto;
+            padding: 0 2rem;
+        }
+
+        .page-header {
+            background: white;
+            border-radius: 10px;
+            padding: 2rem;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            margin-bottom: 2rem;
+        }
+
+        .header-top {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1rem;
+            flex-wrap: wrap;
+            gap: 1rem;
+        }
+
+        .page-title {
+            color: #333;
+            font-size: 1.8rem;
+            margin: 0;
+        }
+
+        .header-actions {
+            display: flex;
+            gap: 1rem;
+            align-items: center;
+        }
+
+        .btn {
+            padding: 0.6rem 1.2rem;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 0.9rem;
+            font-weight: 500;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            transition: all 0.3s ease;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, #dc3545 0%, #c82333 100%);
+            color: white;
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 15px rgba(220, 53, 69, 0.3);
+        }
+
+        .btn-secondary {
+            background: #6c757d;
+            color: white;
+        }
+
+        .btn-secondary:hover {
+            background: #5a6268;
+            transform: translateY(-2px);
+        }
+
+        .btn-success {
+            background: #28a745;
+            color: white;
+        }
+
+        .btn-success:hover {
+            background: #218838;
+            transform: translateY(-2px);
+        }
+
+        /* Alert Messages */
+        .alert {
+            padding: 1rem;
+            border-radius: 6px;
+            margin-bottom: 1.5rem;
+        }
+
+        .alert-warning {
+            background: #fff3cd;
+            color: #856404;
+            border: 1px solid #ffeaa7;
+        }
+
+        .alert-info {
+            background: #d1ecf1;
+            color: #0c5460;
+            border: 1px solid #bee5eb;
+        }
+
+        /* Waste Form */
+        .waste-form-container {
+            background: white;
+            border-radius: 10px;
+            padding: 2rem;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            margin-bottom: 2rem;
+        }
+
+        .form-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 2rem;
+        }
+
+        .meal-section {
+            border: 2px solid #e9ecef;
+            border-radius: 10px;
+            padding: 1.5rem;
+            background: #f8f9fa;
+        }
+
+        .meal-header {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            margin-bottom: 1rem;
+            font-size: 1.2rem;
+            font-weight: 600;
+            color: #333;
+        }
+
+        .form-group {
+            margin-bottom: 1rem;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 0.5rem;
+            font-weight: 500;
+            color: #333;
+        }
+
+        .form-group input,
+        .form-group textarea {
+            width: 100%;
+            padding: 0.8rem;
+            border: 2px solid #e9ecef;
+            border-radius: 6px;
+            font-size: 0.9rem;
+            transition: border-color 0.3s ease;
+        }
+
+        .form-group input:focus,
+        .form-group textarea:focus {
+            outline: none;
+            border-color: #dc3545;
+        }
+
+        .form-group input[readonly] {
+            background-color: #f8f9fa;
+            color: #6c757d;
+        }
+
+        .input-group {
+            display: flex;
+            gap: 0.5rem;
+            align-items: end;
+        }
+
+        .input-group .form-group {
+            flex: 1;
+            margin-bottom: 0;
+        }
+
+        .percentage-display {
+            background: #e9ecef;
+            padding: 0.8rem;
+            border-radius: 6px;
+            text-align: center;
+            font-weight: 600;
+            color: #495057;
+            min-width: 80px;
+        }
+
+        .notes-section {
+            grid-column: 1 / -1;
+            margin-top: 1rem;
+        }
+
+        .form-actions {
+            display: flex;
+            gap: 1rem;
+            justify-content: center;
+            margin-top: 2rem;
+            padding-top: 2rem;
+            border-top: 1px solid #e9ecef;
+        }
+
+        /* Current Data Display */
+        .current-data {
+            background: white;
+            border-radius: 10px;
+            padding: 2rem;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            margin-bottom: 2rem;
+        }
+
+        .data-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 1.5rem;
+        }
+
+        .data-card {
+            background: #f8f9fa;
+            border-radius: 8px;
+            padding: 1.5rem;
+            text-align: center;
+            border: 2px solid #e9ecef;
+        }
+
+        .data-card h4 {
+            color: #333;
+            margin-bottom: 1rem;
+            font-size: 1.1rem;
+        }
+
+        .waste-amount {
+            font-size: 1.5rem;
+            font-weight: bold;
+            color: #dc3545;
+            margin-bottom: 0.5rem;
+        }
+
+        .waste-percentage {
+            font-size: 1rem;
+            color: #666;
+        }
+
+        .total-card {
+            background: linear-gradient(135deg, #dc3545 0%, #c82333 100%);
+            color: white;
+            border-color: #dc3545;
+        }
+
+        .total-card h4 {
+            color: white;
+        }
+
+        .total-card .waste-amount {
+            color: white;
+        }
+
+        .total-card .waste-percentage {
+            color: rgba(255,255,255,0.8);
+        }
+
+        /* Recent Trends */
+        .trends-section {
+            background: white;
+            border-radius: 10px;
+            padding: 2rem;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+
+        .trends-list {
+            display: grid;
+            gap: 1rem;
+        }
+
+        .trend-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 1rem;
+            background: #f8f9fa;
+            border-radius: 6px;
+            border-left: 4px solid #dc3545;
+        }
+
+        .trend-date {
+            font-weight: 600;
+            color: #333;
+        }
+
+        .trend-waste {
+            color: #dc3545;
+            font-weight: 600;
+        }
+
+        /* Responsive Design */
+        @media (max-width: 768px) {
+            .container {
+                padding: 0 1rem;
+            }
+
+            .header-top {
+                flex-direction: column;
+                align-items: stretch;
+            }
+
+            .header-actions {
+                justify-content: center;
+            }
+
+            .form-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .data-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .form-actions {
+                flex-direction: column;
+            }
+
+            .input-group {
+                flex-direction: column;
+                gap: 1rem;
+            }
+
+            .input-group .form-group {
+                margin-bottom: 1rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Header -->
+    <div class="header">
+        <div class="header-content">
+            <h1>🍽️ Mess TV Admin</h1>
+            <div class="user-info">
+                <span>Welcome, <%= user.username %></span>
+                <a href="/admin/logout" class="logout-btn">Logout</a>
+            </div>
+        </div>
+    </div>
+
+    <div class="container">
+        <!-- Page Header -->
+        <div class="page-header">
+            <div class="header-top">
+                <h2 class="page-title">📊 <%= title %></h2>
+                <div class="header-actions">
+                    <a href="/admin/waste" class="btn btn-secondary">
+                        ← Back to Waste Overview
+                    </a>
+                </div>
+            </div>
+
+            <!-- Alerts -->
+            <% if (isFutureDate) { %>
+            <div class="alert alert-warning">
+                <strong>⚠️ Future Date:</strong> Cannot record waste data for future dates. You can only view this page.
+            </div>
+            <% } else if (isReadOnly) { %>
+            <div class="alert alert-info">
+                <strong>ℹ️ Read Only:</strong> This page is in read-only mode.
+            </div>
+            <% } %>
+        </div>
+
+        <% if (wasteData) { %>
+        <!-- Current Waste Data Display -->
+        <div class="current-data">
+            <h3 style="margin-bottom: 1.5rem; color: #333;">📈 Current Waste Data</h3>
+            <div class="data-grid">
+                <div class="data-card">
+                    <h4>🌅 Breakfast</h4>
+                    <div class="waste-amount"><%= wasteData.breakfast.wasteAmount %> kg</div>
+                    <div class="waste-percentage"><%= wasteData.breakfast.wastePercentage %>% waste</div>
+                </div>
+                <div class="data-card">
+                    <h4>🌞 Lunch</h4>
+                    <div class="waste-amount"><%= wasteData.lunch.wasteAmount %> kg</div>
+                    <div class="waste-percentage"><%= wasteData.lunch.wastePercentage %>% waste</div>
+                </div>
+                <div class="data-card">
+                    <h4>🍿 Snacks</h4>
+                    <div class="waste-amount"><%= wasteData.snacks.wasteAmount %> kg</div>
+                    <div class="waste-percentage"><%= wasteData.snacks.wastePercentage %>% waste</div>
+                </div>
+                <div class="data-card">
+                    <h4>🌙 Dinner</h4>
+                    <div class="waste-amount"><%= wasteData.dinner.wasteAmount %> kg</div>
+                    <div class="waste-percentage"><%= wasteData.dinner.wastePercentage %>% waste</div>
+                </div>
+                <div class="data-card total-card">
+                    <h4>📊 Total</h4>
+                    <div class="waste-amount"><%= wasteData.totalWaste %> kg</div>
+                    <div class="waste-percentage"><%= wasteData.overallWastePercentage %>% overall</div>
+                </div>
+            </div>
+            <% if (wasteData.notes) { %>
+            <div style="margin-top: 1.5rem; padding: 1rem; background: #f8f9fa; border-radius: 6px;">
+                <strong>📝 Notes:</strong> <%= wasteData.notes %>
+            </div>
+            <% } %>
+        </div>
+        <% } %>
+
+        <% if (!isReadOnly) { %>
+        <!-- Waste Data Form -->
+        <div class="waste-form-container">
+            <h3 style="margin-bottom: 1.5rem; color: #333;">
+                <% if (wasteData) { %>
+                    ✏️ Update Waste Data
+                <% } else { %>
+                    📝 Add Waste Data
+                <% } %>
+            </h3>
+
+            <form action="/admin/waste" method="POST" id="wasteForm">
+                <input type="hidden" name="date" value="<%= formattedDate %>">
+                
+                <div class="form-grid">
+                    <!-- Breakfast Section -->
+                    <div class="meal-section">
+                        <div class="meal-header">
+                            🌅 Breakfast
+                        </div>
+                        <div class="input-group">
+                            <div class="form-group">
+                                <label for="breakfastWaste">Waste Amount (kg)</label>
+                                <input type="number" 
+                                       id="breakfastWaste" 
+                                       name="breakfastWaste" 
+                                       step="0.1" 
+                                       min="0" 
+                                       max="1000"
+                                       value="<%= wasteData ? wasteData.breakfast.wasteAmount : '' %>"
+                                       required>
+                            </div>
+                            <div class="form-group">
+                                <label for="breakfastTotal">Total Prepared (kg)</label>
+                                <input type="number" 
+                                       id="breakfastTotal" 
+                                       name="breakfastTotal" 
+                                       step="0.1" 
+                                       min="0.1" 
+                                       max="5000"
+                                       value="<%= wasteData ? wasteData.breakfast.totalPrepared : '' %>"
+                                       required>
+                            </div>
+                            <div class="percentage-display" id="breakfastPercentage">
+                                <%= wasteData ? wasteData.breakfast.wastePercentage : 0 %>%
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Lunch Section -->
+                    <div class="meal-section">
+                        <div class="meal-header">
+                            🌞 Lunch
+                        </div>
+                        <div class="input-group">
+                            <div class="form-group">
+                                <label for="lunchWaste">Waste Amount (kg)</label>
+                                <input type="number" 
+                                       id="lunchWaste" 
+                                       name="lunchWaste" 
+                                       step="0.1" 
+                                       min="0" 
+                                       max="1000"
+                                       value="<%= wasteData ? wasteData.lunch.wasteAmount : '' %>"
+                                       required>
+                            </div>
+                            <div class="form-group">
+                                <label for="lunchTotal">Total Prepared (kg)</label>
+                                <input type="number" 
+                                       id="lunchTotal" 
+                                       name="lunchTotal" 
+                                       step="0.1" 
+                                       min="0.1" 
+                                       max="5000"
+                                       value="<%= wasteData ? wasteData.lunch.totalPrepared : '' %>"
+                                       required>
+                            </div>
+                            <div class="percentage-display" id="lunchPercentage">
+                                <%= wasteData ? wasteData.lunch.wastePercentage : 0 %>%
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Snacks Section -->
+                    <div class="meal-section">
+                        <div class="meal-header">
+                            🍿 Snacks
+                        </div>
+                        <div class="input-group">
+                            <div class="form-group">
+                                <label for="snacksWaste">Waste Amount (kg)</label>
+                                <input type="number" 
+                                       id="snacksWaste" 
+                                       name="snacksWaste" 
+                                       step="0.1" 
+                                       min="0" 
+                                       max="1000"
+                                       value="<%= wasteData ? wasteData.snacks.wasteAmount : '' %>"
+                                       required>
+                            </div>
+                            <div class="form-group">
+                                <label for="snacksTotal">Total Prepared (kg)</label>
+                                <input type="number" 
+                                       id="snacksTotal" 
+                                       name="snacksTotal" 
+                                       step="0.1" 
+                                       min="0.1" 
+                                       max="5000"
+                                       value="<%= wasteData ? wasteData.snacks.totalPrepared : '' %>"
+                                       required>
+                            </div>
+                            <div class="percentage-display" id="snacksPercentage">
+                                <%= wasteData ? wasteData.snacks.wastePercentage : 0 %>%
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Dinner Section -->
+                    <div class="meal-section">
+                        <div class="meal-header">
+                            🌙 Dinner
+                        </div>
+                        <div class="input-group">
+                            <div class="form-group">
+                                <label for="dinnerWaste">Waste Amount (kg)</label>
+                                <input type="number" 
+                                       id="dinnerWaste" 
+                                       name="dinnerWaste" 
+                                       step="0.1" 
+                                       min="0" 
+                                       max="1000"
+                                       value="<%= wasteData ? wasteData.dinner.wasteAmount : '' %>"
+                                       required>
+                            </div>
+                            <div class="form-group">
+                                <label for="dinnerTotal">Total Prepared (kg)</label>
+                                <input type="number" 
+                                       id="dinnerTotal" 
+                                       name="dinnerTotal" 
+                                       step="0.1" 
+                                       min="0.1" 
+                                       max="5000"
+                                       value="<%= wasteData ? wasteData.dinner.totalPrepared : '' %>"
+                                       required>
+                            </div>
+                            <div class="percentage-display" id="dinnerPercentage">
+                                <%= wasteData ? wasteData.dinner.wastePercentage : 0 %>%
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Notes Section -->
+                    <div class="notes-section">
+                        <div class="form-group">
+                            <label for="notes">📝 Notes (Optional)</label>
+                            <textarea id="notes" 
+                                      name="notes" 
+                                      rows="3" 
+                                      maxlength="500"
+                                      placeholder="Add any additional notes about waste patterns, reasons, or observations..."><%= wasteData ? wasteData.notes || '' : '' %></textarea>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="form-actions">
+                    <button type="submit" class="btn btn-success">
+                        <% if (wasteData) { %>
+                            💾 Update Waste Data
+                        <% } else { %>
+                            💾 Save Waste Data
+                        <% } %>
+                    </button>
+                    <a href="/admin/waste" class="btn btn-secondary">Cancel</a>
+                </div>
+            </form>
+        </div>
+        <% } %>
+
+        <!-- Recent Waste Trends -->
+        <% if (recentWasteData && recentWasteData.length > 0) { %>
+        <div class="trends-section">
+            <h3 style="margin-bottom: 1.5rem; color: #333;">📈 Recent Waste Trends</h3>
+            <div class="trends-list">
+                <% recentWasteData.forEach(item => { %>
+                <div class="trend-item">
+                    <span class="trend-date"><%= item.date.toLocaleDateString('en-IN') %></span>
+                    <span class="trend-waste"><%= item.totalWaste %> kg (<%= item.overallWastePercentage %>%)</span>
+                </div>
+                <% }); %>
+            </div>
+        </div>
+        <% } %>
+    </div>
+
+    <script>
+        // Calculate percentages in real-time
+        function calculatePercentage(wasteInput, totalInput, displayElement) {
+            const waste = parseFloat(wasteInput.value) || 0;
+            const total = parseFloat(totalInput.value) || 0;
+            const percentage = total > 0 ? Math.round((waste / total) * 100 * 100) / 100 : 0;
+            displayElement.textContent = percentage + '%';
+        }
+
+
+
+        // Add event listeners for real-time calculation
+        document.addEventListener('DOMContentLoaded', function() {
+            const meals = ['breakfast', 'lunch', 'snacks', 'dinner'];
+            
+            meals.forEach(meal => {
+                const wasteInput = document.getElementById(meal + 'Waste');
+                const totalInput = document.getElementById(meal + 'Total');
+                const displayElement = document.getElementById(meal + 'Percentage');
+                
+                if (wasteInput && totalInput && displayElement) {
+                    wasteInput.addEventListener('input', () => calculatePercentage(wasteInput, totalInput, displayElement));
+                    totalInput.addEventListener('input', () => calculatePercentage(wasteInput, totalInput, displayElement));
+                }
+            });
+        });
+    </script>
+</body>
+</html>

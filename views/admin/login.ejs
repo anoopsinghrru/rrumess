@@ -1,0 +1,342 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Login - Mess TV Menu Display</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+
+        .login-container {
+            background: white;
+            border-radius: 10px;
+            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.1);
+            padding: 40px;
+            width: 100%;
+            max-width: 400px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .login-container::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 4px;
+            background: linear-gradient(90deg, #667eea, #764ba2);
+        }
+
+        .login-header {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
+        .login-header h1 {
+            color: #333;
+            font-size: 28px;
+            margin-bottom: 10px;
+            font-weight: 600;
+        }
+
+        .login-header p {
+            color: #666;
+            font-size: 14px;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            color: #333;
+            font-weight: 500;
+            font-size: 14px;
+        }
+
+        .form-group input {
+            width: 100%;
+            padding: 12px 16px;
+            border: 2px solid #e1e5e9;
+            border-radius: 6px;
+            font-size: 16px;
+            transition: border-color 0.3s ease;
+            background-color: #f8f9fa;
+        }
+
+        .form-group input:focus {
+            outline: none;
+            border-color: #667eea;
+            background-color: white;
+        }
+
+        .form-group input.error {
+            border-color: #e74c3c;
+            background-color: #fdf2f2;
+        }
+
+        .error-message {
+            color: #e74c3c;
+            font-size: 14px;
+            margin-top: 5px;
+            display: none;
+        }
+
+        .error-message.show {
+            display: block;
+        }
+
+        .alert {
+            padding: 12px 16px;
+            border-radius: 6px;
+            margin-bottom: 20px;
+            font-size: 14px;
+        }
+
+        .alert-error {
+            background-color: #fdf2f2;
+            color: #e74c3c;
+            border: 1px solid #f5c6cb;
+        }
+
+        .alert-success {
+            background-color: #f0f9f0;
+            color: #28a745;
+            border: 1px solid #c3e6cb;
+        }
+
+        .login-btn {
+            width: 100%;
+            padding: 14px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            border-radius: 6px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: transform 0.2s ease, box-shadow 0.2s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .login-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(102, 126, 234, 0.3);
+        }
+
+        .login-btn:active {
+            transform: translateY(0);
+        }
+
+        .login-btn:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        .login-btn .spinner {
+            display: none;
+            width: 20px;
+            height: 20px;
+            border: 2px solid #ffffff;
+            border-top: 2px solid transparent;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            margin-right: 10px;
+        }
+
+        .login-btn.loading .spinner {
+            display: inline-block;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        .remember-me {
+            display: flex;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+
+        .remember-me input[type="checkbox"] {
+            margin-right: 8px;
+            width: auto;
+        }
+
+        .remember-me label {
+            margin-bottom: 0;
+            font-size: 14px;
+            color: #666;
+            cursor: pointer;
+        }
+
+        .footer-text {
+            text-align: center;
+            margin-top: 30px;
+            padding-top: 20px;
+            border-top: 1px solid #e1e5e9;
+            color: #666;
+            font-size: 12px;
+        }
+
+        /* Responsive design */
+        @media (max-width: 480px) {
+            .login-container {
+                padding: 30px 20px;
+                margin: 10px;
+            }
+
+            .login-header h1 {
+                font-size: 24px;
+            }
+        }
+
+        /* Animation for form appearance */
+        .login-container {
+            animation: slideUp 0.6s ease-out;
+        }
+
+        @keyframes slideUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="login-container">
+        <div class="login-header">
+            <h1>Admin Login</h1>
+            <p>Mess TV Menu Display System</p>
+        </div>
+
+        <% if (typeof error !== 'undefined' && error) { %>
+            <div class="alert alert-error">
+                <%= error %>
+            </div>
+        <% } %>
+
+        <% if (typeof success !== 'undefined' && success) { %>
+            <div class="alert alert-success">
+                <%= success %>
+            </div>
+        <% } %>
+
+        <form id="loginForm" action="/admin/login" method="POST">
+            <div class="form-group">
+                <label for="identifier">Username or Email</label>
+                <input 
+                    type="text" 
+                    id="identifier" 
+                    name="identifier" 
+                    required 
+                    autocomplete="username"
+                    value="<%= typeof formData !== 'undefined' && formData.identifier ? formData.identifier : '' %>"
+                >
+                <div class="error-message" id="identifierError"></div>
+            </div>
+
+            <div class="form-group">
+                <label for="password">Password</label>
+                <input 
+                    type="password" 
+                    id="password" 
+                    name="password" 
+                    required 
+                    autocomplete="current-password"
+                >
+                <div class="error-message" id="passwordError"></div>
+            </div>
+
+            <div class="remember-me">
+                <input type="checkbox" id="rememberMe" name="rememberMe">
+                <label for="rememberMe">Remember me for 30 days</label>
+            </div>
+
+            <button type="submit" class="login-btn" id="loginBtn">
+                <span class="spinner"></span>
+                <span class="btn-text">Sign In</span>
+            </button>
+        </form>
+
+        <div class="footer-text">
+            &copy; <%= new Date().getFullYear() %> Mess TV Menu Display System
+        </div>
+    </div>
+
+    <script>
+        // document.addEventListener('DOMContentLoaded', function() {
+        //     const form = document.getElementById('loginForm');
+        //     const loginBtn = document.getElementById('loginBtn');
+        //     const identifierInput = document.getElementById('identifier');
+        //     const passwordInput = document.getElementById('password');
+
+        //     // Form validation
+        //     function validateForm() {
+        //         let isValid = true;
+        //         clearErrors();
+        //         if (!identifierInput.value.trim()) {
+        //             showError('identifier', 'Username or email is required');
+        //             isValid = false;
+        //         }
+        //         if (!passwordInput.value.trim()) {
+        //             showError('password', 'Password is required');
+        //             isValid = false;
+        //         } else if (passwordInput.value.length < 6) {
+        //             showError('password', 'Password must be at least 6 characters');
+        //             isValid = false;
+        //         }
+        //         return isValid;
+        //     }
+        //     function showError(fieldName, message) {
+        //         const input = document.getElementById(fieldName);
+        //         const errorDiv = document.getElementById(fieldName + 'Error');
+        //         input.classList.add('error');
+        //         errorDiv.textContent = message;
+        //         errorDiv.classList.add('show');
+        //     }
+        //     function clearErrors() {
+        //         const inputs = [identifierInput, passwordInput];
+        //         inputs.forEach(input => {
+        //             input.classList.remove('error');
+        //             const errorDiv = document.getElementById(input.id + 'Error');
+        //             errorDiv.classList.remove('show');
+        //             errorDiv.textContent = '';
+        //         });
+        //     }
+        //     form.addEventListener('submit', function(e) {
+        //         e.preventDefault();
+        //         if (!validateForm()) {
+        //             return;
+        //         }
+        //         // AJAX logic removed to allow standard form POST
+        //     });
+        // });
+    </script>
+</body>
+</html>

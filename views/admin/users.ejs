@@ -1,0 +1,1051 @@
+<%- include('partials/navigation') %>
+
+<div class="admin-dashboard">
+  <!-- Hero Section -->
+  <div class="hero-section">
+    <div class="container-fluid">
+      <div class="hero-content">
+        <div class="hero-text">
+          <h1 class="hero-title">
+            <span class="gradient-text">User Management</span>
+          </h1>
+          <p class="hero-subtitle">Manage your team's access and permissions with ease</p>
+        </div>
+        <div class="hero-action">
+          <a href="/admin/users/new" class="btn-create">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <line x1="12" y1="5" x2="12" y2="19"></line>
+              <line x1="5" y1="12" x2="19" y2="12"></line>
+            </svg>
+            Add New User
+          </a>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Stats Overview -->
+  <div class="stats-section">
+    <div class="container-fluid">
+      <div class="stats-grid">
+        <div class="stat-card primary">
+          <div class="stat-icon">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path>
+              <circle cx="9" cy="7" r="4"></circle>
+              <path d="M23 21v-2a4 4 0 0 0-3-3.87"></path>
+              <path d="M16 3.13a4 4 0 0 1 0 7.75"></path>
+            </svg>
+          </div>
+          <div class="stat-content">
+            <h3 class="stat-number"><%= users.length %></h3>
+            <p class="stat-label">Total Users</p>
+          </div>
+        </div>
+
+        <div class="stat-card success">
+          <div class="stat-icon">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path>
+              <polyline points="22,4 12,14.01 9,11.01"></polyline>
+            </svg>
+          </div>
+          <div class="stat-content">
+            <h3 class="stat-number"><%= users.filter(u => u.isActive).length %></h3>
+            <p class="stat-label">Active Users</p>
+          </div>
+        </div>
+
+        <div class="stat-card warning">
+          <div class="stat-icon">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"></path>
+            </svg>
+          </div>
+          <div class="stat-content">
+            <h3 class="stat-number"><%= users.filter(u => u.role === 'admin').length %></h3>
+            <p class="stat-label">Super Admins</p>
+          </div>
+        </div>
+
+        <div class="stat-card info">
+          <div class="stat-icon">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
+              <circle cx="12" cy="7" r="4"></circle>
+            </svg>
+          </div>
+          <div class="stat-content">
+            <h3 class="stat-number"><%= users.filter(u => u.role !== 'admin').length %></h3>
+            <p class="stat-label">Managers</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Main Content -->
+  <div class="main-content">
+    <div class="container-fluid">
+      <!-- Filters -->
+      <div class="filters-card">
+        <div class="filters-header">
+          <h3>Filter Users</h3>
+          <div class="filter-count"><%= users.length %> users found</div>
+        </div>
+        <form method="GET" class="filters-form">
+          <div class="filter-row">
+            <div class="filter-group">
+              <label>Search</label>
+              <div class="search-input">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <circle cx="11" cy="11" r="8"></circle>
+                  <path d="M21 21l-4.35-4.35"></path>
+                </svg>
+                <input type="text" name="search" value="<%= filters.search %>" placeholder="Search by name, email, or username">
+              </div>
+            </div>
+            
+            <div class="filter-group">
+              <label>Role</label>
+              <select name="role" class="select-input">
+                <option value="">All Roles</option>
+                <% Object.entries(roles).forEach(([key, role]) => { %>
+                  <option value="<%= key %>" <%= filters.role === key ? 'selected' : '' %>>
+                    <%= role.name %>
+                  </option>
+                <% }); %>
+              </select>
+            </div>
+            
+            <div class="filter-group">
+              <label>Status</label>
+              <select name="status" class="select-input">
+                <option value="">All Status</option>
+                <option value="active" <%= filters.status === 'active' ? 'selected' : '' %>>Active</option>
+                <option value="inactive" <%= filters.status === 'inactive' ? 'selected' : '' %>>Inactive</option>
+              </select>
+            </div>
+            
+            <div class="filter-actions">
+              <button type="submit" class="btn-filter">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <polygon points="22,3 2,3 10,12.46 10,19 14,21 14,12.46"></polygon>
+                </svg>
+                Filter
+              </button>
+              <a href="/admin/users" class="btn-clear">Clear</a>
+            </div>
+          </div>
+        </form>
+      </div>
+
+      <!-- Users Table -->
+      <div class="users-card">
+        <% if (users.length === 0) { %>
+          <div class="empty-state">
+            <div class="empty-icon">
+              <svg width="64" height="64" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1">
+                <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path>
+                <circle cx="9" cy="7" r="4"></circle>
+                <path d="M23 21v-2a4 4 0 0 0-3-3.87"></path>
+                <path d="M16 3.13a4 4 0 0 1 0 7.75"></path>
+              </svg>
+            </div>
+            <h3>No users found</h3>
+            <p>No users match your current filters. Try adjusting your search criteria.</p>
+            <a href="/admin/users/new" class="btn-primary">Create First User</a>
+          </div>
+        <% } else { %>
+          <div class="table-container">
+            <table class="users-table">
+              <thead>
+                <tr>
+                  <th>User</th>
+                  <th>Role</th>
+                  <th>Status</th>
+                  <th>Last Login</th>
+                  <th>Created</th>
+                  <th>Actions</th>
+                </tr>
+              </thead>
+              <tbody>
+                <% users.forEach(user => { %>
+                  <tr class="user-row">
+                    <td class="user-info">
+                      <div class="user-avatar">
+                        <div class="avatar-circle">
+                          <%= user.fullName.charAt(0).toUpperCase() %>
+                        </div>
+                      </div>
+                      <div class="user-details">
+                        <h4 class="user-name"><%= user.fullName %></h4>
+                        <p class="user-username">@<%= user.username %></p>
+                        <p class="user-email"><%= user.email %></p>
+                      </div>
+                    </td>
+                    
+                    <td class="user-role">
+                      <% if (user.role === 'admin') { %>
+                        <span class="role-badge admin">
+                          <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"></path>
+                          </svg>
+                          <%= user.getRoleDisplayName() %>
+                        </span>
+                      <% } else if (user.role === 'menu_waste_manager') { %>
+                        <span class="role-badge manager">
+                          <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M8 2h8a2 2 0 0 1 2 2v16a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2z"></path>
+                            <path d="M12 6v4"></path>
+                            <path d="M12 14h.01"></path>
+                          </svg>
+                          <%= user.getRoleDisplayName() %>
+                        </span>
+                      <% } else { %>
+                        <span class="role-badge nutrition">
+                          <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M12 2.22l10 6.3v2C22 17.52 18.36 22 12 22s-10-4.48-10-10.48V8.52l10-6.3z"></path>
+                          </svg>
+                          <%= user.getRoleDisplayName() %>
+                        </span>
+                      <% } %>
+                    </td>
+                    
+                    <td class="user-status">
+                      <% if (user.isActive) { %>
+                        <span class="status-badge active">
+                          <div class="status-dot"></div>
+                          Active
+                        </span>
+                      <% } else { %>
+                        <span class="status-badge inactive">
+                          <div class="status-dot"></div>
+                          Inactive
+                        </span>
+                      <% } %>
+                    </td>
+                    
+                    <td class="user-login">
+                      <% if (user.lastLogin) { %>
+                        <div class="login-info">
+                          <span class="login-date"><%= new Date(user.lastLogin).toLocaleDateString() %></span>
+                          <span class="login-time"><%= new Date(user.lastLogin).toLocaleTimeString() %></span>
+                        </div>
+                      <% } else { %>
+                        <span class="no-login">Never</span>
+                      <% } %>
+                    </td>
+                    
+                    <td class="user-created">
+                      <div class="created-info">
+                        <span class="created-date"><%= new Date(user.createdAt).toLocaleDateString() %></span>
+                        <% if (user.createdBy) { %>
+                          <span class="created-by">by <%= user.createdBy.fullName || user.createdBy.username %></span>
+                        <% } %>
+                      </div>
+                    </td>
+                    
+                    <td class="user-actions">
+                      <% if (user._id.toString() !== currentUser._id.toString()) { %>
+                        <div class="action-buttons">
+                          <a href="/admin/users/<%= user._id %>/edit" class="btn-action edit" title="Edit User">
+                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                              <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path>
+                              <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"></path>
+                            </svg>
+                          </a>
+                          
+                          <button onclick="toggleUserStatus('<%= user._id %>', <%= user.isActive %>)" 
+                                  class="btn-action <%= user.isActive ? 'deactivate' : 'activate' %>"
+                                  title="<%= user.isActive ? 'Deactivate' : 'Activate' %> User">
+                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                              <% if (user.isActive) { %>
+                                <circle cx="12" cy="12" r="10"></circle>
+                                <line x1="15" y1="9" x2="9" y2="15"></line>
+                                <line x1="9" y1="9" x2="15" y2="15"></line>
+                              <% } else { %>
+                                <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path>
+                                <polyline points="22,4 12,14.01 9,11.01"></polyline>
+                              <% } %>
+                            </svg>
+                          </button>
+                          
+                          <button onclick="deleteUser('<%= user._id %>', '<%= user.fullName %>')" 
+                                  class="btn-action delete" title="Delete User">
+                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                              <polyline points="3,6 5,6 21,6"></polyline>
+                              <path d="M19,6v14a2,2 0 0,1 -2,2H7a2,2 0 0,1 -2,-2V6m3,0V4a2,2 0 0,1 2,-2h4a2,2 0 0,1 2,2v2"></path>
+                            </svg>
+                          </button>
+                        </div>
+                      <% } else { %>
+                        <span class="current-user-badge">Current User</span>
+                      <% } %>
+                    </td>
+                  </tr>
+                <% }); %>
+              </tbody>
+            </table>
+          </div>
+
+          <!-- Pagination -->
+          <% if (pagination.pages > 1) { %>
+            <div class="pagination-container">
+              <nav class="pagination">
+                <% if (pagination.page > 1) { %>
+                  <a href="?page=<%= pagination.page - 1 %>&search=<%= filters.search %>&role=<%= filters.role %>&status=<%= filters.status %>" class="page-link">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                      <polyline points="15,18 9,12 15,6"></polyline>
+                    </svg>
+                    Previous
+                  </a>
+                <% } %>
+                
+                <div class="page-numbers">
+                  <% for (let i = Math.max(1, pagination.page - 2); i <= Math.min(pagination.pages, pagination.page + 2); i++) { %>
+                    <a href="?page=<%= i %>&search=<%= filters.search %>&role=<%= filters.role %>&status=<%= filters.status %>" 
+                       class="page-link <%= i === pagination.page ? 'active' : '' %>">
+                      <%= i %>
+                    </a>
+                  <% } %>
+                </div>
+                
+                <% if (pagination.page < pagination.pages) { %>
+                  <a href="?page=<%= pagination.page + 1 %>&search=<%= filters.search %>&role=<%= filters.role %>&status=<%= filters.status %>" class="page-link">
+                    Next
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                      <polyline points="9,18 15,12 9,6"></polyline>
+                    </svg>
+                  </a>
+                <% } %>
+              </nav>
+            </div>
+          <% } %>
+        <% } %>
+      </div>
+    </div>
+  </div>
+</div>
+
+<style>
+/* Modern Dashboard Styles */
+.admin-dashboard {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  min-height: 100vh;
+  padding-bottom: 2rem;
+}
+
+/* Hero Section */
+.hero-section {
+  padding: 3rem 0 2rem;
+  color: white;
+}
+
+.hero-content {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0 2rem;
+}
+
+.hero-title {
+  font-size: 3rem;
+  font-weight: 700;
+  margin: 0;
+  line-height: 1.2;
+}
+
+.gradient-text {
+  background: linear-gradient(45deg, #fff, #f0f0f0);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+.hero-subtitle {
+  font-size: 1.2rem;
+  opacity: 0.9;
+  margin: 0.5rem 0 0;
+  font-weight: 300;
+}
+
+.btn-create {
+  background: rgba(255, 255, 255, 0.2);
+  border: 2px solid rgba(255, 255, 255, 0.3);
+  color: white;
+  padding: 0.75rem 1.5rem;
+  border-radius: 12px;
+  text-decoration: none;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-weight: 600;
+  transition: all 0.3s ease;
+  backdrop-filter: blur(10px);
+}
+
+.btn-create:hover {
+  background: rgba(255, 255, 255, 0.3);
+  border-color: rgba(255, 255, 255, 0.5);
+  transform: translateY(-2px);
+  color: white;
+  text-decoration: none;
+}
+
+/* Stats Section */
+.stats-section {
+  padding: 0 2rem 2rem;
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+.stats-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  gap: 1.5rem;
+}
+
+.stat-card {
+  background: white;
+  border-radius: 16px;
+  padding: 1.5rem;
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+  transition: all 0.3s ease;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+.stat-card:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 8px 30px rgba(0, 0, 0, 0.15);
+}
+
+.stat-card.primary { border-left: 4px solid #667eea; }
+.stat-card.success { border-left: 4px solid #10b981; }
+.stat-card.warning { border-left: 4px solid #f59e0b; }
+.stat-card.info { border-left: 4px solid #3b82f6; }
+
+.stat-icon {
+  width: 48px;
+  height: 48px;
+  border-radius: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: white;
+}
+
+.stat-card.primary .stat-icon { background: linear-gradient(135deg, #667eea, #764ba2); }
+.stat-card.success .stat-icon { background: linear-gradient(135deg, #10b981, #059669); }
+.stat-card.warning .stat-icon { background: linear-gradient(135deg, #f59e0b, #d97706); }
+.stat-card.info .stat-icon { background: linear-gradient(135deg, #3b82f6, #2563eb); }
+
+.stat-number {
+  font-size: 2rem;
+  font-weight: 700;
+  margin: 0;
+  color: #1f2937;
+}
+
+.stat-label {
+  margin: 0;
+  color: #6b7280;
+  font-weight: 500;
+}
+
+/* Main Content */
+.main-content {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0 2rem;
+}
+
+/* Filters Card */
+.filters-card {
+  background: white;
+  border-radius: 16px;
+  padding: 1.5rem;
+  margin-bottom: 2rem;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+}
+
+.filters-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1.5rem;
+}
+
+.filters-header h3 {
+  margin: 0;
+  color: #1f2937;
+  font-weight: 600;
+}
+
+.filter-count {
+  color: #6b7280;
+  font-weight: 500;
+}
+
+.filters-form {
+  margin: 0;
+}
+
+.filter-row {
+  display: grid;
+  grid-template-columns: 2fr 1fr 1fr auto;
+  gap: 1rem;
+  align-items: end;
+}
+
+.filter-group label {
+  display: block;
+  margin-bottom: 0.5rem;
+  color: #374151;
+  font-weight: 500;
+  font-size: 0.875rem;
+}
+
+.search-input {
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+
+.search-input svg {
+  position: absolute;
+  left: 12px;
+  color: #9ca3af;
+}
+
+.search-input input {
+  width: 100%;
+  padding: 0.75rem 0.75rem 0.75rem 2.5rem;
+  border: 2px solid #e5e7eb;
+  border-radius: 8px;
+  font-size: 0.875rem;
+  transition: all 0.2s ease;
+}
+
+.search-input input:focus {
+  outline: none;
+  border-color: #667eea;
+  box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+}
+
+.select-input {
+  width: 100%;
+  padding: 0.75rem;
+  border: 2px solid #e5e7eb;
+  border-radius: 8px;
+  font-size: 0.875rem;
+  background: white;
+  transition: all 0.2s ease;
+}
+
+.select-input:focus {
+  outline: none;
+  border-color: #667eea;
+  box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+}
+
+.filter-actions {
+  display: flex;
+  gap: 0.5rem;
+}
+
+.btn-filter {
+  background: #667eea;
+  color: white;
+  border: none;
+  padding: 0.75rem 1rem;
+  border-radius: 8px;
+  font-weight: 500;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.btn-filter:hover {
+  background: #5a6fd8;
+  transform: translateY(-1px);
+}
+
+.btn-clear {
+  background: #f3f4f6;
+  color: #374151;
+  border: 2px solid #e5e7eb;
+  padding: 0.75rem 1rem;
+  border-radius: 8px;
+  font-weight: 500;
+  text-decoration: none;
+  transition: all 0.2s ease;
+}
+
+.btn-clear:hover {
+  background: #e5e7eb;
+  color: #1f2937;
+  text-decoration: none;
+}
+
+/* Users Card */
+.users-card {
+  background: white;
+  border-radius: 16px;
+  overflow: hidden;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+}
+
+.empty-state {
+  text-align: center;
+  padding: 4rem 2rem;
+  color: #6b7280;
+}
+
+.empty-icon {
+  margin-bottom: 1.5rem;
+  color: #d1d5db;
+}
+
+.empty-state h3 {
+  margin: 0 0 0.5rem;
+  color: #374151;
+  font-weight: 600;
+}
+
+.empty-state p {
+  margin: 0 0 2rem;
+  font-size: 0.875rem;
+}
+
+.btn-primary {
+  background: #667eea;
+  color: white;
+  border: none;
+  padding: 0.75rem 1.5rem;
+  border-radius: 8px;
+  font-weight: 500;
+  text-decoration: none;
+  transition: all 0.2s ease;
+}
+
+.btn-primary:hover {
+  background: #5a6fd8;
+  color: white;
+  text-decoration: none;
+  transform: translateY(-1px);
+}
+
+/* Table Styles */
+.table-container {
+  overflow-x: auto;
+}
+
+.users-table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.users-table th {
+  background: #f9fafb;
+  padding: 1rem;
+  text-align: left;
+  font-weight: 600;
+  color: #374151;
+  font-size: 0.875rem;
+  border-bottom: 1px solid #e5e7eb;
+}
+
+.users-table td {
+  padding: 1rem;
+  border-bottom: 1px solid #f3f4f6;
+  vertical-align: middle;
+}
+
+.user-row:hover {
+  background: #f9fafb;
+}
+
+/* User Info */
+.user-info {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+
+.user-avatar {
+  flex-shrink: 0;
+}
+
+.avatar-circle {
+  width: 48px;
+  height: 48px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, #667eea, #764ba2);
+  color: white;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 600;
+  font-size: 1.125rem;
+}
+
+.user-details {
+  flex: 1;
+}
+
+.user-name {
+  margin: 0 0 0.25rem;
+  color: #1f2937;
+  font-weight: 600;
+  font-size: 0.875rem;
+}
+
+.user-username {
+  margin: 0 0 0.25rem;
+  color: #6b7280;
+  font-size: 0.75rem;
+}
+
+.user-email {
+  margin: 0;
+  color: #9ca3af;
+  font-size: 0.75rem;
+}
+
+/* Role Badges */
+.role-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.375rem 0.75rem;
+  border-radius: 6px;
+  font-size: 0.75rem;
+  font-weight: 500;
+}
+
+.role-badge.admin {
+  background: #fef2f2;
+  color: #dc2626;
+}
+
+.role-badge.manager {
+  background: #eff6ff;
+  color: #2563eb;
+}
+
+.role-badge.nutrition {
+  background: #f0fdf4;
+  color: #16a34a;
+}
+
+/* Status Badges */
+.status-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.375rem 0.75rem;
+  border-radius: 6px;
+  font-size: 0.75rem;
+  font-weight: 500;
+}
+
+.status-badge.active {
+  background: #f0fdf4;
+  color: #16a34a;
+}
+
+.status-badge.inactive {
+  background: #fef2f2;
+  color: #dc2626;
+}
+
+.status-dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+}
+
+.status-badge.active .status-dot {
+  background: #16a34a;
+}
+
+.status-badge.inactive .status-dot {
+  background: #dc2626;
+}
+
+/* Login and Created Info */
+.login-info, .created-info {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+}
+
+.login-date, .created-date {
+  color: #1f2937;
+  font-weight: 500;
+  font-size: 0.875rem;
+}
+
+.login-time, .created-by {
+  color: #6b7280;
+  font-size: 0.75rem;
+}
+
+.no-login {
+  color: #9ca3af;
+  font-size: 0.875rem;
+}
+
+/* Action Buttons */
+.action-buttons {
+  display: flex;
+  gap: 0.5rem;
+}
+
+.btn-action {
+  width: 32px;
+  height: 32px;
+  border: none;
+  border-radius: 6px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  color: white;
+}
+
+.btn-action.edit {
+  background: #3b82f6;
+}
+
+.btn-action.edit:hover {
+  background: #2563eb;
+  transform: translateY(-1px);
+}
+
+.btn-action.activate {
+  background: #10b981;
+}
+
+.btn-action.activate:hover {
+  background: #059669;
+  transform: translateY(-1px);
+}
+
+.btn-action.deactivate {
+  background: #f59e0b;
+}
+
+.btn-action.deactivate:hover {
+  background: #d97706;
+  transform: translateY(-1px);
+}
+
+.btn-action.delete {
+  background: #ef4444;
+}
+
+.btn-action.delete:hover {
+  background: #dc2626;
+  transform: translateY(-1px);
+}
+
+.current-user-badge {
+  background: #f3f4f6;
+  color: #6b7280;
+  padding: 0.375rem 0.75rem;
+  border-radius: 6px;
+  font-size: 0.75rem;
+  font-weight: 500;
+}
+
+/* Pagination */
+.pagination-container {
+  padding: 1.5rem;
+  border-top: 1px solid #e5e7eb;
+}
+
+.pagination {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.page-link {
+  padding: 0.5rem 0.75rem;
+  border: 1px solid #e5e7eb;
+  border-radius: 6px;
+  color: #374151;
+  text-decoration: none;
+  font-weight: 500;
+  transition: all 0.2s ease;
+  display: flex;
+  align-items: center;
+  gap: 0.25rem;
+}
+
+.page-link:hover {
+  background: #f9fafb;
+  color: #1f2937;
+  text-decoration: none;
+}
+
+.page-link.active {
+  background: #667eea;
+  color: white;
+  border-color: #667eea;
+}
+
+.page-numbers {
+  display: flex;
+  gap: 0.25rem;
+}
+
+/* Responsive Design */
+@media (max-width: 1024px) {
+  .hero-content {
+    flex-direction: column;
+    text-align: center;
+    gap: 2rem;
+  }
+  
+  .hero-title {
+    font-size: 2.5rem;
+  }
+  
+  .filter-row {
+    grid-template-columns: 1fr;
+    gap: 1rem;
+  }
+  
+  .filter-actions {
+    justify-content: center;
+  }
+}
+
+@media (max-width: 768px) {
+  .hero-section {
+    padding: 2rem 0 1rem;
+  }
+  
+  .hero-content {
+    padding: 0 1rem;
+  }
+  
+  .hero-title {
+    font-size: 2rem;
+  }
+  
+  .stats-section {
+    padding: 0 1rem 1rem;
+  }
+  
+  .main-content {
+    padding: 0 1rem;
+  }
+  
+  .stats-grid {
+    grid-template-columns: 1fr;
+  }
+  
+  .users-table {
+    font-size: 0.875rem;
+  }
+  
+  .user-info {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 0.5rem;
+  }
+  
+  .action-buttons {
+    flex-direction: column;
+  }
+}
+</style>
+
+<script>
+function toggleUserStatus(userId, currentStatus) {
+  const action = currentStatus ? 'deactivate' : 'activate';
+  const userName = event.target.closest('tr').querySelector('.user-name').textContent;
+  
+  if (confirm(`Are you sure you want to ${action} user "${userName}"?`)) {
+    fetch(`/admin/users/${userId}/toggle-status`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      }
+    })
+    .then(response => response.json())
+    .then(data => {
+      if (data.success) {
+        location.reload();
+      } else {
+        alert('Error: ' + data.error);
+      }
+    })
+    .catch(error => {
+      alert('An error occurred while updating user status');
+    });
+  }
+}
+
+function deleteUser(userId, userName) {
+  if (confirm(`Are you sure you want to delete user "${userName}"? This action cannot be undone.`)) {
+    fetch(`/admin/users/${userId}`, {
+      method: 'DELETE',
+      headers: {
+        'Content-Type': 'application/json',
+      }
+    })
+    .then(response => response.json())
+    .then(data => {
+      if (data.success) {
+        location.reload();
+      } else {
+        alert('Error: ' + data.error);
+      }
+    })
+    .catch(error => {
+      alert('An error occurred while deleting user');
+    });
+  }
+}
+
+// Add smooth animations
+document.addEventListener('DOMContentLoaded', function() {
+  // Animate stats cards
+  const statCards = document.querySelectorAll('.stat-card');
+  statCards.forEach((card, index) => {
+    card.style.opacity = '0';
+    card.style.transform = 'translateY(20px)';
+    setTimeout(() => {
+      card.style.transition = 'all 0.5s ease';
+      card.style.opacity = '1';
+      card.style.transform = 'translateY(0)';
+    }, index * 100);
+  });
+  
+  // Animate user rows
+  const userRows = document.querySelectorAll('.user-row');
+  userRows.forEach((row, index) => {
+    row.style.opacity = '0';
+    row.style.transform = 'translateX(-20px)';
+    setTimeout(() => {
+      row.style.transition = 'all 0.3s ease';
+      row.style.opacity = '1';
+      row.style.transform = 'translateX(0)';
+    }, 500 + index * 50);
+  });
+});
+</script> 

@@ -1,0 +1,17 @@
+name,category,date,description,calories,protein,carbohydrates,fat,fiber,isactive
+"Idli with Sambar",breakfast,2024-01-15,"Steamed rice cakes with lentil soup",150,6,25,3,2,true
+"Chicken Biryani",lunch,2024-01-15,"Aromatic rice with chicken and spices",450,25,60,12,4,true
+"Fruit Salad",snacks,2024-01-15,"Fresh seasonal fruits",80,1,18,0,3,true
+"Dal Khichdi",dinner,2024-01-15,"Rice and lentils cooked together",280,12,45,8,6,true
+"Masala Dosa",breakfast,2024-01-16,"Crispy rice crepe with potato filling",200,8,30,6,3,true
+"Veg Thali",lunch,2024-01-16,"Complete meal with rice, dal, vegetables",350,15,55,10,8,true
+"Tea with Biscuits",snacks,2024-01-16,"Hot tea with cookies",120,2,20,4,1,true
+"Roti with Sabzi",dinner,2024-01-16,"Whole wheat bread with vegetable curry",250,10,40,6,5,true
+"Poha",breakfast,2024-01-17,"Flattened rice with vegetables",180,5,30,4,2,true
+"Fish Curry",lunch,2024-01-17,"Spicy fish curry with rice",320,22,45,8,3,true
+"Mixed Nuts",snacks,2024-01-17,"Assorted nuts and dried fruits",200,8,15,12,4,true
+"Khichdi",dinner,2024-01-17,"Simple rice and lentil dish",220,9,35,6,4,true
+"Upma",breakfast,2024-01-18,"Semolina breakfast dish",160,4,28,4,2,true
+"Paneer Curry",lunch,2024-01-18,"Cottage cheese curry",280,16,25,12,3,true
+"Fresh Juice",snacks,2024-01-18,"Seasonal fruit juice",90,1,20,0,2,true
+"Chapati with Dal",dinner,2024-01-18,"Flatbread with lentil soup",240,10,38,6,5,true 

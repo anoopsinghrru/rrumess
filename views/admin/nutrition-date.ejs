@@ -1,0 +1,871 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title><%= title %> - Mess TV Nutrition Management</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #f5f5f5;
+            line-height: 1.6;
+        }
+
+        .header {
+            background: linear-gradient(135deg, #28a745 0%, #20c997 100%);
+            color: white;
+            padding: 1rem 2rem;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+
+        .header-content {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+        .header h1 {
+            font-size: 1.8rem;
+            font-weight: 600;
+        }
+
+        .user-info {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .user-info span {
+            font-size: 0.9rem;
+            opacity: 0.9;
+        }
+
+        .logout-btn {
+            background: rgba(255,255,255,0.2);
+            color: white;
+            border: none;
+            padding: 0.5rem 1rem;
+            border-radius: 5px;
+            cursor: pointer;
+            text-decoration: none;
+            font-size: 0.9rem;
+            transition: background-color 0.3s ease;
+        }
+
+        .logout-btn:hover {
+            background: rgba(255,255,255,0.3);
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 2rem auto;
+            padding: 0 2rem;
+        }
+
+        .page-header {
+            background: white;
+            border-radius: 10px;
+            padding: 2rem;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            margin-bottom: 2rem;
+        }
+
+        .header-top {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1.5rem;
+            flex-wrap: wrap;
+            gap: 1rem;
+        }
+
+        .page-title {
+            color: #333;
+            font-size: 1.8rem;
+            margin: 0;
+        }
+
+        .header-actions {
+            display: flex;
+            gap: 1rem;
+            align-items: center;
+        }
+
+        .btn {
+            padding: 0.6rem 1.2rem;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 0.9rem;
+            font-weight: 500;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            transition: all 0.3s ease;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, #28a745 0%, #20c997 100%);
+            color: white;
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(40, 167, 69, 0.3);
+        }
+
+        .btn-secondary {
+            background: #6c757d;
+            color: white;
+        }
+
+        .btn-success {
+            background: #28a745;
+            color: white;
+        }
+
+        .btn-warning {
+            background: #ffc107;
+            color: #212529;
+        }
+
+        .btn-sm {
+            padding: 0.4rem 0.8rem;
+            font-size: 0.8rem;
+        }
+
+        .stats-row {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1rem;
+            margin-bottom: 2rem;
+        }
+
+        .stat-card {
+            background: white;
+            padding: 1.5rem;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            text-align: center;
+        }
+
+        .stat-number {
+            font-size: 2rem;
+            font-weight: 700;
+            color: #28a745;
+            display: block;
+        }
+
+        .stat-label {
+            font-size: 0.9rem;
+            color: #666;
+            margin-top: 0.5rem;
+        }
+
+        .menu-sections {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 2rem;
+            margin-bottom: 2rem;
+        }
+
+        .menu-section {
+            background: white;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            overflow: hidden;
+        }
+
+        .section-header {
+            background: #f8f9fa;
+            padding: 1rem 1.5rem;
+            border-bottom: 1px solid #dee2e6;
+        }
+
+        .section-title {
+            font-size: 1.2rem;
+            font-weight: 600;
+            color: #333;
+            margin: 0;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .menu-items {
+            padding: 1rem;
+        }
+
+        .menu-item {
+            background: #f8f9fa;
+            border-radius: 8px;
+            padding: 1rem;
+            margin-bottom: 1rem;
+            border-left: 4px solid #28a745;
+        }
+
+        .menu-item:last-child {
+            margin-bottom: 0;
+        }
+
+        .item-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 0.5rem;
+        }
+
+        .item-name {
+            font-weight: 600;
+            color: #333;
+            font-size: 1rem;
+        }
+
+        .item-status {
+            padding: 0.2rem 0.5rem;
+            border-radius: 12px;
+            font-size: 0.7rem;
+            font-weight: 500;
+        }
+
+        .status-pending {
+            background: #fff3cd;
+            color: #856404;
+        }
+
+        .status-completed {
+            background: #d4edda;
+            color: #155724;
+        }
+
+        .item-description {
+            color: #666;
+            font-size: 0.9rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .item-nutrition {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.5rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .nutrition-item {
+            background: white;
+            padding: 0.2rem 0.5rem;
+            border-radius: 8px;
+            font-size: 0.8rem;
+            color: #666;
+        }
+
+        .item-actions {
+            display: flex;
+            gap: 0.5rem;
+            justify-content: flex-end;
+        }
+
+        .empty-section {
+            text-align: center;
+            padding: 2rem;
+            color: #666;
+            font-style: italic;
+        }
+
+        .empty-icon {
+            font-size: 2rem;
+            margin-bottom: 0.5rem;
+        }
+
+        /* Modal Styles */
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 1000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0,0,0,0.5);
+            overflow-y: auto;
+        }
+
+        .modal-content {
+            background-color: white;
+            margin: 5vh auto;
+            padding: 30px;
+            border-radius: 10px;
+            width: 90%;
+            max-width: 500px;
+            position: relative;
+            max-height: 90vh;
+            overflow-y: auto;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.3);
+        }
+
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+            padding-bottom: 15px;
+            border-bottom: 1px solid #eee;
+        }
+
+        .modal-title {
+            font-size: 1.5rem;
+            font-weight: 600;
+            color: #333;
+            margin: 0;
+        }
+
+        .close {
+            color: #aaa;
+            font-size: 28px;
+            font-weight: bold;
+            cursor: pointer;
+            line-height: 1;
+        }
+
+        .close:hover,
+        .close:focus {
+            color: #000;
+        }
+
+        .modal-body {
+            margin-bottom: 20px;
+        }
+
+        .modal-footer {
+            display: flex;
+            justify-content: flex-end;
+            gap: 10px;
+            padding-top: 15px;
+            border-top: 1px solid #eee;
+        }
+
+        .form-group {
+            margin-bottom: 1rem;
+        }
+
+        .form-label {
+            display: block;
+            margin-bottom: 0.5rem;
+            font-weight: 600;
+            color: #333;
+        }
+
+        .form-input {
+            width: 100%;
+            padding: 0.75rem;
+            border: 2px solid #ddd;
+            border-radius: 5px;
+            font-size: 0.9rem;
+            transition: border-color 0.3s ease;
+        }
+
+        .form-input:focus {
+            outline: none;
+            border-color: #28a745;
+        }
+
+        .nutrition-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 1rem;
+        }
+
+        /* Mobile Responsive */
+        @media (max-width: 768px) {
+            .container {
+                padding: 0 1rem;
+                margin: 1rem auto;
+            }
+
+            .header-top {
+                flex-direction: column;
+                align-items: stretch;
+                text-align: center;
+            }
+
+            .header-actions {
+                justify-content: center;
+            }
+
+            .stats-row {
+                grid-template-columns: repeat(2, 1fr);
+            }
+
+            .menu-sections {
+                grid-template-columns: 1fr;
+            }
+
+            .item-header {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 0.5rem;
+            }
+
+            .item-actions {
+                justify-content: flex-start;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .stats-row {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <header class="header">
+        <div class="header-content">
+            <h1>🍎 Nutrition Management</h1>
+            <div class="user-info">
+                <span>Welcome, <%= user.username %></span>
+                <a href="/admin/logout" class="logout-btn">Logout</a>
+            </div>
+        </div>
+    </header>
+
+    <div class="container">
+        <%- include('partials/navigation') %>
+
+        <div class="page-header">
+            <div class="header-top">
+                <h2 class="page-title">📅 Nutrition for <%= new Date(selectedDate).toLocaleDateString('en-US', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' }) %></h2>
+                <div class="header-actions">
+                    <a href="/admin/nutrition" class="btn btn-secondary">
+                        ← Back to Overview
+                    </a>
+                    <a href="/admin/menu/date/<%= formattedDate %>" class="btn btn-primary">
+                        📝 Manage Menu
+                    </a>
+                </div>
+            </div>
+        </div>
+
+        <!-- Statistics Row -->
+        <div class="stats-row">
+            <div class="stat-card">
+                <span class="stat-number"><%= stats.total %></span>
+                <div class="stat-label">Total Items</div>
+            </div>
+            <div class="stat-card">
+                <span class="stat-number"><%= stats.pending %></span>
+                <div class="stat-label">Pending Nutrition</div>
+            </div>
+            <div class="stat-card">
+                <span class="stat-number"><%= stats.completed %></span>
+                <div class="stat-label">Completed</div>
+            </div>
+            <div class="stat-card">
+                <span class="stat-number"><%= stats.total > 0 ? Math.round((stats.completed / stats.total) * 100) : 0 %>%</span>
+                <div class="stat-label">Completion Rate</div>
+            </div>
+        </div>
+
+        <!-- Menu Sections -->
+        <div class="menu-sections">
+            <!-- Breakfast -->
+            <div class="menu-section">
+                <div class="section-header">
+                    <h3 class="section-title">🌅 Breakfast</h3>
+                </div>
+                <div class="menu-items">
+                    <% if (pendingItems.breakfast && pendingItems.breakfast.length > 0) { %>
+                        <% pendingItems.breakfast.forEach(item => { %>
+                            <div class="menu-item">
+                                <div class="item-header">
+                                    <div class="item-name"><%= item.name %></div>
+                                    <span class="item-status status-pending">⏳ Pending</span>
+                                </div>
+                                <% if (item.description) { %>
+                                    <div class="item-description"><%= item.description %></div>
+                                <% } %>
+                                <div class="item-actions">
+                                    <button onclick="addNutrition('<%= item._id %>', '<%= item.name %>')" class="btn btn-success btn-sm">
+                                        ➕ Add Nutrition
+                                    </button>
+                                </div>
+                            </div>
+                        <% }); %>
+                    <% } %>
+                    
+                    <% if (completedItems.breakfast && completedItems.breakfast.length > 0) { %>
+                        <% completedItems.breakfast.forEach(item => { %>
+                            <div class="menu-item">
+                                <div class="item-header">
+                                    <div class="item-name"><%= item.name %></div>
+                                    <span class="item-status status-completed">✅ Complete</span>
+                                </div>
+                                <% if (item.description) { %>
+                                    <div class="item-description"><%= item.description %></div>
+                                <% } %>
+                                <div class="item-nutrition">
+                                    <% if (item.nutritionalInfo) { %>
+                                        <span class="nutrition-item">Cal: <%= item.nutritionalInfo.calories %>kcal</span>
+                                        <span class="nutrition-item">Protein: <%= item.nutritionalInfo.protein %>g</span>
+                                        <span class="nutrition-item">Carbs: <%= item.nutritionalInfo.carbohydrates %>g</span>
+                                        <span class="nutrition-item">Fat: <%= item.nutritionalInfo.fat %>g</span>
+                                        <span class="nutrition-item">Fiber: <%= item.nutritionalInfo.fiber %>g</span>
+                                    <% } else { %>
+                                        <span class="nutrition-item nutrition-pending">Nutrition data pending</span>
+                                    <% } %>
+                                </div>
+                                <div class="item-actions">
+                                    <button onclick="editNutrition('<%= item._id %>', '<%= item.name %>', <%= JSON.stringify(item.nutritionalInfo) %>)" class="btn btn-warning btn-sm">
+                                        ✏️ Edit
+                                    </button>
+                                </div>
+                            </div>
+                        <% }); %>
+                    <% } %>
+                    
+                    <% if ((!pendingItems.breakfast || pendingItems.breakfast.length === 0) && (!completedItems.breakfast || completedItems.breakfast.length === 0)) { %>
+                        <div class="empty-section">
+                            <div class="empty-icon">🍽️</div>
+                            <p>No breakfast items</p>
+                        </div>
+                    <% } %>
+                </div>
+            </div>
+
+            <!-- Lunch -->
+            <div class="menu-section">
+                <div class="section-header">
+                    <h3 class="section-title">🌞 Lunch</h3>
+                </div>
+                <div class="menu-items">
+                    <% if (pendingItems.lunch && pendingItems.lunch.length > 0) { %>
+                        <% pendingItems.lunch.forEach(item => { %>
+                            <div class="menu-item">
+                                <div class="item-header">
+                                    <div class="item-name"><%= item.name %></div>
+                                    <span class="item-status status-pending">⏳ Pending</span>
+                                </div>
+                                <% if (item.description) { %>
+                                    <div class="item-description"><%= item.description %></div>
+                                <% } %>
+                                <div class="item-actions">
+                                    <button onclick="addNutrition('<%= item._id %>', '<%= item.name %>')" class="btn btn-success btn-sm">
+                                        ➕ Add Nutrition
+                                    </button>
+                                </div>
+                            </div>
+                        <% }); %>
+                    <% } %>
+                    
+                    <% if (completedItems.lunch && completedItems.lunch.length > 0) { %>
+                        <% completedItems.lunch.forEach(item => { %>
+                            <div class="menu-item">
+                                <div class="item-header">
+                                    <div class="item-name"><%= item.name %></div>
+                                    <span class="item-status status-completed">✅ Complete</span>
+                                </div>
+                                <% if (item.description) { %>
+                                    <div class="item-description"><%= item.description %></div>
+                                <% } %>
+                                <div class="item-nutrition">
+                                    <% if (item.nutritionalInfo) { %>
+                                        <span class="nutrition-item">Cal: <%= item.nutritionalInfo.calories %>kcal</span>
+                                        <span class="nutrition-item">Protein: <%= item.nutritionalInfo.protein %>g</span>
+                                        <span class="nutrition-item">Carbs: <%= item.nutritionalInfo.carbohydrates %>g</span>
+                                        <span class="nutrition-item">Fat: <%= item.nutritionalInfo.fat %>g</span>
+                                        <span class="nutrition-item">Fiber: <%= item.nutritionalInfo.fiber %>g</span>
+                                    <% } else { %>
+                                        <span class="nutrition-item nutrition-pending">Nutrition data pending</span>
+                                    <% } %>
+                                </div>
+                                <div class="item-actions">
+                                    <button onclick="editNutrition('<%= item._id %>', '<%= item.name %>', <%= JSON.stringify(item.nutritionalInfo) %>)" class="btn btn-warning btn-sm">
+                                        ✏️ Edit
+                                    </button>
+                                </div>
+                            </div>
+                        <% }); %>
+                    <% } %>
+                    
+                    <% if ((!pendingItems.lunch || pendingItems.lunch.length === 0) && (!completedItems.lunch || completedItems.lunch.length === 0)) { %>
+                        <div class="empty-section">
+                            <div class="empty-icon">🍽️</div>
+                            <p>No lunch items</p>
+                        </div>
+                    <% } %>
+                </div>
+            </div>
+
+            <!-- Snacks -->
+            <div class="menu-section">
+                <div class="section-header">
+                    <h3 class="section-title">🍿 Snacks</h3>
+                </div>
+                <div class="menu-items">
+                    <% if (pendingItems.snacks && pendingItems.snacks.length > 0) { %>
+                        <% pendingItems.snacks.forEach(item => { %>
+                            <div class="menu-item">
+                                <div class="item-header">
+                                    <div class="item-name"><%= item.name %></div>
+                                    <span class="item-status status-pending">⏳ Pending</span>
+                                </div>
+                                <% if (item.description) { %>
+                                    <div class="item-description"><%= item.description %></div>
+                                <% } %>
+                                <div class="item-actions">
+                                    <button onclick="addNutrition('<%= item._id %>', '<%= item.name %>')" class="btn btn-success btn-sm">
+                                        ➕ Add Nutrition
+                                    </button>
+                                </div>
+                            </div>
+                        <% }); %>
+                    <% } %>
+                    
+                    <% if (completedItems.snacks && completedItems.snacks.length > 0) { %>
+                        <% completedItems.snacks.forEach(item => { %>
+                            <div class="menu-item">
+                                <div class="item-header">
+                                    <div class="item-name"><%= item.name %></div>
+                                    <span class="item-status status-completed">✅ Complete</span>
+                                </div>
+                                <% if (item.description) { %>
+                                    <div class="item-description"><%= item.description %></div>
+                                <% } %>
+                                <div class="item-nutrition">
+                                    <% if (item.nutritionalInfo) { %>
+                                        <span class="nutrition-item">Cal: <%= item.nutritionalInfo.calories %>kcal</span>
+                                        <span class="nutrition-item">Protein: <%= item.nutritionalInfo.protein %>g</span>
+                                        <span class="nutrition-item">Carbs: <%= item.nutritionalInfo.carbohydrates %>g</span>
+                                        <span class="nutrition-item">Fat: <%= item.nutritionalInfo.fat %>g</span>
+                                        <span class="nutrition-item">Fiber: <%= item.nutritionalInfo.fiber %>g</span>
+                                    <% } else { %>
+                                        <span class="nutrition-item nutrition-pending">Nutrition data pending</span>
+                                    <% } %>
+                                </div>
+                                <div class="item-actions">
+                                    <button onclick="editNutrition('<%= item._id %>', '<%= item.name %>', <%= JSON.stringify(item.nutritionalInfo) %>)" class="btn btn-warning btn-sm">
+                                        ✏️ Edit
+                                    </button>
+                                </div>
+                            </div>
+                        <% }); %>
+                    <% } %>
+                    
+                    <% if ((!pendingItems.snacks || pendingItems.snacks.length === 0) && (!completedItems.snacks || completedItems.snacks.length === 0)) { %>
+                        <div class="empty-section">
+                            <div class="empty-icon">🍿</div>
+                            <p>No snack items</p>
+                        </div>
+                    <% } %>
+                </div>
+            </div>
+
+            <!-- Dinner -->
+            <div class="menu-section">
+                <div class="section-header">
+                    <h3 class="section-title">🌙 Dinner</h3>
+                </div>
+                <div class="menu-items">
+                    <% if (pendingItems.dinner && pendingItems.dinner.length > 0) { %>
+                        <% pendingItems.dinner.forEach(item => { %>
+                            <div class="menu-item">
+                                <div class="item-header">
+                                    <div class="item-name"><%= item.name %></div>
+                                    <span class="item-status status-pending">⏳ Pending</span>
+                                </div>
+                                <% if (item.description) { %>
+                                    <div class="item-description"><%= item.description %></div>
+                                <% } %>
+                                <div class="item-actions">
+                                    <button onclick="addNutrition('<%= item._id %>', '<%= item.name %>')" class="btn btn-success btn-sm">
+                                        ➕ Add Nutrition
+                                    </button>
+                                </div>
+                            </div>
+                        <% }); %>
+                    <% } %>
+                    
+                    <% if (completedItems.dinner && completedItems.dinner.length > 0) { %>
+                        <% completedItems.dinner.forEach(item => { %>
+                            <div class="menu-item">
+                                <div class="item-header">
+                                    <div class="item-name"><%= item.name %></div>
+                                    <span class="item-status status-completed">✅ Complete</span>
+                                </div>
+                                <% if (item.description) { %>
+                                    <div class="item-description"><%= item.description %></div>
+                                <% } %>
+                                <div class="item-nutrition">
+                                    <% if (item.nutritionalInfo) { %>
+                                        <span class="nutrition-item">Cal: <%= item.nutritionalInfo.calories %>kcal</span>
+                                        <span class="nutrition-item">Protein: <%= item.nutritionalInfo.protein %>g</span>
+                                        <span class="nutrition-item">Carbs: <%= item.nutritionalInfo.carbohydrates %>g</span>
+                                        <span class="nutrition-item">Fat: <%= item.nutritionalInfo.fat %>g</span>
+                                        <span class="nutrition-item">Fiber: <%= item.nutritionalInfo.fiber %>g</span>
+                                    <% } else { %>
+                                        <span class="nutrition-item nutrition-pending">Nutrition data pending</span>
+                                    <% } %>
+                                </div>
+                                <div class="item-actions">
+                                    <button onclick="editNutrition('<%= item._id %>', '<%= item.name %>', <%= JSON.stringify(item.nutritionalInfo) %>)" class="btn btn-warning btn-sm">
+                                        ✏️ Edit
+                                    </button>
+                                </div>
+                            </div>
+                        <% }); %>
+                    <% } %>
+                    
+                    <% if ((!pendingItems.dinner || pendingItems.dinner.length === 0) && (!completedItems.dinner || completedItems.dinner.length === 0)) { %>
+                        <div class="empty-section">
+                            <div class="empty-icon">🌙</div>
+                            <p>No dinner items</p>
+                        </div>
+                    <% } %>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Add/Edit Nutrition Modal -->
+    <div id="nutritionModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 class="modal-title" id="modalTitle">Add Nutrition Data</h3>
+                <span class="close" onclick="closeNutritionModal()">&times;</span>
+            </div>
+            <form id="nutritionForm">
+                <div class="modal-body">
+                    <div class="form-group">
+                        <label class="form-label">Item Name</label>
+                        <input type="text" id="itemName" class="form-input" readonly>
+                    </div>
+                    
+                    <h4 style="margin: 1.5rem 0 1rem 0; color: #333;">Nutritional Information</h4>
+                    <div class="nutrition-grid">
+                        <div class="form-group">
+                            <label class="form-label">Calories (kcal) *</label>
+                            <input type="number" id="calories" name="calories" class="form-input" min="0" step="0.1" required>
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">Protein (g) *</label>
+                            <input type="number" id="protein" name="protein" class="form-input" min="0" step="0.1" required>
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">Carbs (g) *</label>
+                            <input type="number" id="carbohydrates" name="carbohydrates" class="form-input" min="0" step="0.1" required>
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">Fat (g) *</label>
+                            <input type="number" id="fat" name="fat" class="form-input" min="0" step="0.1" required>
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">Fiber (g)</label>
+                            <input type="number" id="fiber" name="fiber" class="form-input" min="0" step="0.1" value="0">
+                        </div>
+                    </div>
+                </div>
+
+                <div class="modal-footer">
+                    <button type="button" onclick="closeNutritionModal()" class="btn btn-secondary">Cancel</button>
+                    <button type="submit" class="btn btn-success">Save Nutrition Data</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <script>
+        let currentItemId = null;
+        let isEditMode = false;
+
+        function addNutrition(itemId, itemName) {
+            currentItemId = itemId;
+            isEditMode = false;
+            document.getElementById('modalTitle').textContent = 'Add Nutrition Data';
+            document.getElementById('nutritionForm').reset();
+            document.getElementById('itemName').value = itemName;
+            document.getElementById('nutritionModal').style.display = 'block';
+        }
+
+        function editNutrition(itemId, itemName, nutritionData) {
+            currentItemId = itemId;
+            isEditMode = true;
+            document.getElementById('modalTitle').textContent = 'Edit Nutrition Data';
+            document.getElementById('itemName').value = itemName;
+            
+            // Populate form with existing data
+            document.getElementById('calories').value = nutritionData.calories;
+            document.getElementById('protein').value = nutritionData.protein;
+            document.getElementById('carbohydrates').value = nutritionData.carbohydrates;
+            document.getElementById('fat').value = nutritionData.fat;
+            document.getElementById('fiber').value = nutritionData.fiber;
+            
+            document.getElementById('nutritionModal').style.display = 'block';
+        }
+
+        function closeNutritionModal() {
+            document.getElementById('nutritionModal').style.display = 'none';
+            document.getElementById('nutritionForm').reset();
+            currentItemId = null;
+            isEditMode = false;
+        }
+
+        // Handle nutrition form submission
+        document.getElementById('nutritionForm').addEventListener('submit', async function(e) {
+            e.preventDefault();
+            
+            if (!currentItemId) {
+                alert('No item selected');
+                return;
+            }
+
+            const formData = new FormData(this);
+            const nutritionData = {
+                calories: parseFloat(formData.get('calories')) || 0,
+                protein: parseFloat(formData.get('protein')) || 0,
+                carbohydrates: parseFloat(formData.get('carbohydrates')) || 0,
+                fat: parseFloat(formData.get('fat')) || 0,
+                fiber: parseFloat(formData.get('fiber')) || 0
+            };
+
+            try {
+                const method = isEditMode ? 'PUT' : 'POST';
+                const response = await fetch(`/admin/nutrition/${currentItemId}`, {
+                    method: method,
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(nutritionData)
+                });
+
+                const result = await response.json();
+
+                if (result.success) {
+                    alert(isEditMode ? 'Nutrition data updated successfully!' : 'Nutrition data added successfully!');
+                    location.reload();
+                } else {
+                    alert('Error: ' + result.error);
+                }
+            } catch (error) {
+                alert('An error occurred while saving nutrition data');
+            }
+        });
+
+        // Close modal when clicking outside
+        window.onclick = function(event) {
+            const nutritionModal = document.getElementById('nutritionModal');
+            if (event.target === nutritionModal) {
+                nutritionModal.style.display = 'none';
+            }
+        }
+    </script>
+</body>
+</html> 

@@ -1,0 +1,803 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title><%= title %> - Mess TV Nutrition Management</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #f5f5f5;
+            line-height: 1.6;
+        }
+
+        .header {
+            background: linear-gradient(135deg, #28a745 0%, #20c997 100%);
+            color: white;
+            padding: 1rem 2rem;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+
+        .header-content {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+        .header h1 {
+            font-size: 1.8rem;
+            font-weight: 600;
+        }
+
+        .user-info {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .user-info span {
+            font-size: 0.9rem;
+            opacity: 0.9;
+        }
+
+        .logout-btn {
+            background: rgba(255,255,255,0.2);
+            color: white;
+            border: none;
+            padding: 0.5rem 1rem;
+            border-radius: 5px;
+            cursor: pointer;
+            text-decoration: none;
+            font-size: 0.9rem;
+            transition: background-color 0.3s ease;
+        }
+
+        .logout-btn:hover {
+            background: rgba(255,255,255,0.3);
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 2rem auto;
+            padding: 0 2rem;
+        }
+
+        .page-header {
+            background: white;
+            border-radius: 10px;
+            padding: 2rem;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            margin-bottom: 2rem;
+        }
+
+        .header-top {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1.5rem;
+            flex-wrap: wrap;
+            gap: 1rem;
+        }
+
+        .page-title {
+            color: #333;
+            font-size: 1.8rem;
+            margin: 0;
+        }
+
+        .header-actions {
+            display: flex;
+            gap: 1rem;
+            align-items: center;
+        }
+
+        .btn {
+            padding: 0.6rem 1.2rem;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 0.9rem;
+            font-weight: 500;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            transition: all 0.3s ease;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, #28a745 0%, #20c997 100%);
+            color: white;
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(40, 167, 69, 0.3);
+        }
+
+        .btn-secondary {
+            background: #6c757d;
+            color: white;
+        }
+
+        .btn-success {
+            background: #28a745;
+            color: white;
+        }
+
+        .btn-warning {
+            background: #ffc107;
+            color: #212529;
+        }
+
+        .btn-sm {
+            padding: 0.4rem 0.8rem;
+            font-size: 0.8rem;
+        }
+
+        .date-filters {
+            display: flex;
+            gap: 1rem;
+            align-items: center;
+            flex-wrap: wrap;
+        }
+
+        .filter-group {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .filter-input {
+            padding: 0.5rem;
+            border: 2px solid #ddd;
+            border-radius: 5px;
+            font-size: 0.9rem;
+        }
+
+        .stats-row {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1rem;
+            margin-bottom: 2rem;
+        }
+
+        .stat-card {
+            background: white;
+            padding: 1.5rem;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            text-align: center;
+        }
+
+        .stat-number {
+            font-size: 2rem;
+            font-weight: 700;
+            color: #28a745;
+            display: block;
+        }
+
+        .stat-label {
+            font-size: 0.9rem;
+            color: #666;
+            margin-top: 0.5rem;
+        }
+
+        .nutrition-table-container {
+            background: white;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            overflow: hidden;
+        }
+
+        .table-header {
+            background: #f8f9fa;
+            padding: 1rem 1.5rem;
+            border-bottom: 1px solid #dee2e6;
+        }
+
+        .table-title {
+            font-size: 1.2rem;
+            font-weight: 600;
+            color: #333;
+            margin: 0;
+        }
+
+        .nutrition-table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        .nutrition-table th,
+        .nutrition-table td {
+            padding: 1rem;
+            text-align: left;
+            border-bottom: 1px solid #dee2e6;
+        }
+
+        .nutrition-table th {
+            background: #f8f9fa;
+            font-weight: 600;
+            color: #495057;
+            font-size: 0.9rem;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .nutrition-table tbody tr {
+            transition: background-color 0.2s ease;
+        }
+
+        .nutrition-table tbody tr:hover {
+            background: #f8f9fa;
+        }
+
+        .date-cell {
+            font-weight: 600;
+            color: #333;
+        }
+
+        .date-info {
+            display: flex;
+            flex-direction: column;
+            gap: 0.2rem;
+        }
+
+        .date-main {
+            font-size: 1rem;
+            font-weight: 600;
+        }
+
+        .date-sub {
+            font-size: 0.8rem;
+            color: #666;
+        }
+
+        .category-badge {
+            padding: 0.3rem 0.8rem;
+            border-radius: 15px;
+            font-size: 0.8rem;
+            font-weight: 500;
+            text-transform: capitalize;
+        }
+
+        .category-breakfast {
+            background: #fff3cd;
+            color: #856404;
+        }
+
+        .category-lunch {
+            background: #d1ecf1;
+            color: #0c5460;
+        }
+
+        .category-snacks {
+            background: #f8d7da;
+            color: #721c24;
+        }
+
+        .category-dinner {
+            background: #d4edda;
+            color: #155724;
+        }
+
+        .status-cell {
+            text-align: center;
+        }
+
+        .status-badge {
+            padding: 0.4rem 0.8rem;
+            border-radius: 15px;
+            font-size: 0.8rem;
+            font-weight: 500;
+        }
+
+        .status-pending {
+            background: #fff3cd;
+            color: #856404;
+        }
+
+        .actions-cell {
+            text-align: center;
+        }
+
+        .action-buttons {
+            display: flex;
+            gap: 0.5rem;
+            justify-content: center;
+        }
+
+        .pagination {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 1rem;
+            margin-top: 2rem;
+            padding: 1rem;
+            background: white;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+
+        .pagination-info {
+            color: #666;
+            font-size: 0.9rem;
+        }
+
+        .pagination-buttons {
+            display: flex;
+            gap: 0.5rem;
+        }
+
+        .no-data {
+            text-align: center;
+            padding: 3rem;
+            color: #666;
+            font-style: italic;
+        }
+
+        /* Modal Styles */
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 1000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0,0,0,0.5);
+            overflow-y: auto;
+        }
+
+        .modal-content {
+            background-color: white;
+            margin: 5vh auto;
+            padding: 30px;
+            border-radius: 10px;
+            width: 90%;
+            max-width: 500px;
+            position: relative;
+            max-height: 90vh;
+            overflow-y: auto;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.3);
+        }
+
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+            padding-bottom: 15px;
+            border-bottom: 1px solid #eee;
+        }
+
+        .modal-title {
+            font-size: 1.5rem;
+            font-weight: 600;
+            color: #333;
+            margin: 0;
+        }
+
+        .close {
+            color: #aaa;
+            font-size: 28px;
+            font-weight: bold;
+            cursor: pointer;
+            line-height: 1;
+        }
+
+        .close:hover,
+        .close:focus {
+            color: #000;
+        }
+
+        .modal-body {
+            margin-bottom: 20px;
+        }
+
+        .modal-footer {
+            display: flex;
+            justify-content: flex-end;
+            gap: 10px;
+            padding-top: 15px;
+            border-top: 1px solid #eee;
+        }
+
+        .form-group {
+            margin-bottom: 1rem;
+        }
+
+        .form-label {
+            display: block;
+            margin-bottom: 0.5rem;
+            font-weight: 600;
+            color: #333;
+        }
+
+        .form-input {
+            width: 100%;
+            padding: 0.75rem;
+            border: 2px solid #ddd;
+            border-radius: 5px;
+            font-size: 0.9rem;
+            transition: border-color 0.3s ease;
+        }
+
+        .form-input:focus {
+            outline: none;
+            border-color: #28a745;
+        }
+
+        .nutrition-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 1rem;
+        }
+
+        /* Mobile Responsive */
+        @media (max-width: 768px) {
+            .container {
+                padding: 0 1rem;
+                margin: 1rem auto;
+            }
+
+            .header-top {
+                flex-direction: column;
+                align-items: stretch;
+                text-align: center;
+            }
+
+            .header-actions {
+                justify-content: center;
+            }
+
+            .date-filters {
+                justify-content: center;
+            }
+
+            .stats-row {
+                grid-template-columns: repeat(2, 1fr);
+            }
+
+            .nutrition-table-container {
+                overflow-x: auto;
+            }
+
+            .nutrition-table {
+                min-width: 800px;
+            }
+
+            .action-buttons {
+                flex-direction: column;
+            }
+
+            .pagination {
+                flex-direction: column;
+                gap: 0.5rem;
+            }
+
+            .pagination-buttons {
+                order: -1;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .stats-row {
+                grid-template-columns: 1fr;
+            }
+
+            .date-filters {
+                flex-direction: column;
+                align-items: stretch;
+            }
+
+            .filter-group {
+                justify-content: space-between;
+            }
+        }
+    </style>
+</head>
+<body>
+    <header class="header">
+        <div class="header-content">
+            <h1>🍎 Nutrition Management</h1>
+            <div class="user-info">
+                <span>Welcome, <%= user.username %></span>
+                <a href="/admin/logout" class="logout-btn">Logout</a>
+            </div>
+        </div>
+    </header>
+
+    <div class="container">
+        <%- include('partials/navigation') %>
+
+        <div class="page-header">
+            <div class="header-top">
+                <h2 class="page-title">📊 Nutrition Data Overview</h2>
+                <div class="header-actions">
+                    <button onclick="showDatePicker()" class="btn btn-primary">
+                        📅 View by Date
+                    </button>
+                </div>
+            </div>
+
+            <div class="date-filters">
+                <div class="filter-group">
+                    <label>From:</label>
+                    <input type="date" id="startDate" class="filter-input" value="<%= dateRange.startDate %>">
+                </div>
+                <div class="filter-group">
+                    <label>To:</label>
+                    <input type="date" id="endDate" class="filter-input" value="<%= dateRange.endDate %>">
+                </div>
+                <button onclick="applyDateFilter()" class="btn btn-secondary btn-sm">Apply Filter</button>
+                <button onclick="resetDateFilter()" class="btn btn-secondary btn-sm">Reset</button>
+            </div>
+        </div>
+
+        <!-- Statistics Row -->
+        <div class="stats-row">
+            <div class="stat-card">
+                <span class="stat-number"><%= stats.pending %></span>
+                <div class="stat-label">Pending Nutrition</div>
+            </div>
+            <div class="stat-card">
+                <span class="stat-number"><%= stats.completed %></span>
+                <div class="stat-label">Completed</div>
+            </div>
+            <div class="stat-card">
+                <span class="stat-number"><%= stats.total %></span>
+                <div class="stat-label">Total Items</div>
+            </div>
+            <div class="stat-card">
+                <span class="stat-number"><%= stats.total > 0 ? Math.round((stats.completed / stats.total) * 100) : 0 %>%</span>
+                <div class="stat-label">Completion Rate</div>
+            </div>
+        </div>
+
+        <!-- Nutrition Table -->
+        <div class="nutrition-table-container">
+            <div class="table-header">
+                <h3 class="table-title">Items Pending Nutrition Data</h3>
+            </div>
+
+            <% if (pendingItems && pendingItems.length > 0) { %>
+                <table class="nutrition-table">
+                    <thead>
+                        <tr>
+                            <th>Date</th>
+                            <th>Item Name</th>
+                            <th>Category</th>
+                            <th>Description</th>
+                            <th>Status</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <% pendingItems.forEach(item => { %>
+                            <tr>
+                                <td class="date-cell">
+                                    <div class="date-info">
+                                        <div class="date-main"><%= item.formattedDate %></div>
+                                        <div class="date-sub"><%= new Date(item.date).toLocaleDateString('en-US', { weekday: 'short' }) %></div>
+                                    </div>
+                                </td>
+                                <td><strong><%= item.name %></strong></td>
+                                <td>
+                                    <span class="category-badge category-<%= item.category %>">
+                                        <%= item.category %>
+                                    </span>
+                                </td>
+                                <td><%= item.description || 'No description' %></td>
+                                <td class="status-cell">
+                                    <span class="status-badge status-pending">⏳ Pending</span>
+                                </td>
+                                <td class="actions-cell">
+                                    <div class="action-buttons">
+                                        <button onclick="addNutrition('<%= item._id %>', '<%= item.name %>')" class="btn btn-success btn-sm">
+                                            ➕ Add Nutrition
+                                        </button>
+                                    </div>
+                                </td>
+                            </tr>
+                        <% }); %>
+                    </tbody>
+                </table>
+            <% } else { %>
+                <div class="no-data">
+                    🎉 No items pending nutrition data for the selected date range!
+                </div>
+            <% } %>
+        </div>
+
+        <!-- Pagination -->
+        <% if (pagination.totalPages > 1) { %>
+            <div class="pagination">
+                <div class="pagination-info">
+                    Page <%= pagination.currentPage %> of <%= pagination.totalPages %>
+                </div>
+                <div class="pagination-buttons">
+                    <% if (pagination.hasPrevPage) { %>
+                        <a href="?page=<%= pagination.currentPage - 1 %>&startDate=<%= dateRange.startDate %>&endDate=<%= dateRange.endDate %>" 
+                           class="btn btn-secondary btn-sm">← Previous</a>
+                    <% } %>
+                    <% if (pagination.hasNextPage) { %>
+                        <a href="?page=<%= pagination.currentPage + 1 %>&startDate=<%= dateRange.startDate %>&endDate=<%= dateRange.endDate %>" 
+                           class="btn btn-secondary btn-sm">Next →</a>
+                    <% } %>
+                </div>
+            </div>
+        <% } %>
+    </div>
+
+    <!-- Date Picker Modal -->
+    <div id="datePicker" class="modal" style="display: none;">
+        <div class="modal-content" style="max-width: 400px; margin: 10% auto; padding: 2rem; background: white; border-radius: 10px; box-shadow: 0 4px 20px rgba(0,0,0,0.3);">
+            <h3 style="margin-bottom: 1rem; color: #333;">Select Date for Nutrition Management</h3>
+            <div style="margin-bottom: 1rem;">
+                <label style="display: block; margin-bottom: 0.5rem; font-weight: 600;">Date:</label>
+                <input type="date" id="selectedDate" style="width: 100%; padding: 0.75rem; border: 2px solid #ddd; border-radius: 5px;" 
+                       value="<%= new Date().toISOString().split('T')[0] %>">
+            </div>
+            <div style="display: flex; gap: 1rem; justify-content: flex-end;">
+                <button onclick="closeDatePicker()" class="btn btn-secondary">Cancel</button>
+                <button onclick="goToSelectedDate()" class="btn btn-primary">Go to Date</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Add Nutrition Modal -->
+    <div id="nutritionModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 class="modal-title">Add Nutrition Data</h3>
+                <span class="close" onclick="closeNutritionModal()">&times;</span>
+            </div>
+            <form id="nutritionForm">
+                <div class="modal-body">
+                    <div class="form-group">
+                        <label class="form-label">Item Name</label>
+                        <input type="text" id="itemName" class="form-input" readonly>
+                    </div>
+                    
+                    <h4 style="margin: 1.5rem 0 1rem 0; color: #333;">Nutritional Information</h4>
+                    <div class="nutrition-grid">
+                        <div class="form-group">
+                            <label class="form-label">Calories (kcal) *</label>
+                            <input type="number" id="calories" name="calories" class="form-input" min="0" step="0.1" required>
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">Protein (g) *</label>
+                            <input type="number" id="protein" name="protein" class="form-input" min="0" step="0.1" required>
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">Carbs (g) *</label>
+                            <input type="number" id="carbohydrates" name="carbohydrates" class="form-input" min="0" step="0.1" required>
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">Fat (g) *</label>
+                            <input type="number" id="fat" name="fat" class="form-input" min="0" step="0.1" required>
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">Fiber (g)</label>
+                            <input type="number" id="fiber" name="fiber" class="form-input" min="0" step="0.1" value="0">
+                        </div>
+                    </div>
+                </div>
+
+                <div class="modal-footer">
+                    <button type="button" onclick="closeNutritionModal()" class="btn btn-secondary">Cancel</button>
+                    <button type="submit" class="btn btn-success">Add Nutrition Data</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <script>
+        let currentItemId = null;
+
+        function applyDateFilter() {
+            const startDate = document.getElementById('startDate').value;
+            const endDate = document.getElementById('endDate').value;
+            
+            if (startDate && endDate) {
+                window.location.href = `/admin/nutrition?startDate=${startDate}&endDate=${endDate}`;
+            } else {
+                alert('Please select both start and end dates');
+            }
+        }
+
+        function resetDateFilter() {
+            window.location.href = '/admin/nutrition';
+        }
+
+        function showDatePicker() {
+            document.getElementById('datePicker').style.display = 'block';
+        }
+
+        function closeDatePicker() {
+            document.getElementById('datePicker').style.display = 'none';
+        }
+
+        function goToSelectedDate() {
+            const selectedDate = document.getElementById('selectedDate').value;
+            if (selectedDate) {
+                window.location.href = `/admin/nutrition/date/${selectedDate}`;
+            }
+        }
+
+        function addNutrition(itemId, itemName) {
+            currentItemId = itemId;
+            document.getElementById('itemName').value = itemName;
+            document.getElementById('nutritionModal').style.display = 'block';
+        }
+
+        function closeNutritionModal() {
+            document.getElementById('nutritionModal').style.display = 'none';
+            document.getElementById('nutritionForm').reset();
+            currentItemId = null;
+        }
+
+        // Handle nutrition form submission
+        document.getElementById('nutritionForm').addEventListener('submit', async function(e) {
+            e.preventDefault();
+            
+            if (!currentItemId) {
+                alert('No item selected');
+                return;
+            }
+
+            const formData = new FormData(this);
+            const nutritionData = {
+                calories: parseFloat(formData.get('calories')) || 0,
+                protein: parseFloat(formData.get('protein')) || 0,
+                carbohydrates: parseFloat(formData.get('carbohydrates')) || 0,
+                fat: parseFloat(formData.get('fat')) || 0,
+                fiber: parseFloat(formData.get('fiber')) || 0
+            };
+
+            try {
+                const response = await fetch(`/admin/nutrition/${currentItemId}`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(nutritionData)
+                });
+
+                const result = await response.json();
+
+                if (result.success) {
+                    alert('Nutrition data added successfully!');
+                    location.reload();
+                } else {
+                    alert('Error: ' + result.error);
+                }
+            } catch (error) {
+                alert('An error occurred while adding nutrition data');
+            }
+        });
+
+        // Close modal when clicking outside
+        window.onclick = function(event) {
+            const dateModal = document.getElementById('datePicker');
+            const nutritionModal = document.getElementById('nutritionModal');
+            
+            if (event.target === dateModal) {
+                dateModal.style.display = 'none';
+            }
+            if (event.target === nutritionModal) {
+                nutritionModal.style.display = 'none';
+            }
+        }
+    </script>
+</body>
+</html> 

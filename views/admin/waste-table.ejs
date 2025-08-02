@@ -1,0 +1,580 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title><%= title %> - Mess TV Menu Display</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #f5f5f5;
+            line-height: 1.6;
+        }
+
+        .header {
+            background: linear-gradient(135deg, #dc3545 0%, #c82333 100%);
+            color: white;
+            padding: 1rem 2rem;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+
+        .header-content {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+        .header h1 {
+            font-size: 1.8rem;
+            font-weight: 600;
+        }
+
+        .user-info {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .user-info span {
+            font-size: 0.9rem;
+            opacity: 0.9;
+        }
+
+        .logout-btn {
+            background: rgba(255,255,255,0.2);
+            color: white;
+            border: none;
+            padding: 0.5rem 1rem;
+            border-radius: 5px;
+            cursor: pointer;
+            text-decoration: none;
+            font-size: 0.9rem;
+            transition: background-color 0.3s ease;
+        }
+
+        .logout-btn:hover {
+            background: rgba(255,255,255,0.3);
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 2rem auto;
+            padding: 0 2rem;
+        }
+
+        .page-header {
+            background: white;
+            border-radius: 10px;
+            padding: 2rem;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            margin-bottom: 2rem;
+        }
+
+        .header-top {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1.5rem;
+            flex-wrap: wrap;
+            gap: 1rem;
+        }
+
+        .page-title {
+            color: #333;
+            font-size: 1.8rem;
+            margin: 0;
+        }
+
+        .header-actions {
+            display: flex;
+            gap: 1rem;
+            align-items: center;
+        }
+
+        .btn {
+            padding: 0.6rem 1.2rem;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 0.9rem;
+            font-weight: 500;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            transition: all 0.3s ease;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, #dc3545 0%, #c82333 100%);
+            color: white;
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 15px rgba(220, 53, 69, 0.3);
+        }
+
+        .btn-secondary {
+            background: #6c757d;
+            color: white;
+        }
+
+        .btn-secondary:hover {
+            background: #5a6268;
+            transform: translateY(-2px);
+        }
+
+        .btn-outline {
+            background: transparent;
+            color: #dc3545;
+            border: 2px solid #dc3545;
+        }
+
+        .btn-outline:hover {
+            background: #dc3545;
+            color: white;
+        }
+
+        .btn-sm {
+            padding: 0.4rem 0.8rem;
+            font-size: 0.8rem;
+        }
+
+        /* Statistics Cards */
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1rem;
+            margin-bottom: 2rem;
+        }
+
+        .stat-card {
+            background: white;
+            border-radius: 8px;
+            padding: 1.5rem;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            text-align: center;
+        }
+
+        .stat-number {
+            font-size: 2rem;
+            font-weight: bold;
+            color: #dc3545;
+            margin-bottom: 0.5rem;
+        }
+
+        .stat-label {
+            color: #666;
+            font-size: 0.9rem;
+        }
+
+        /* Date Range Filter */
+        .filter-section {
+            background: white;
+            border-radius: 10px;
+            padding: 1.5rem;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            margin-bottom: 2rem;
+        }
+
+        .filter-form {
+            display: flex;
+            gap: 1rem;
+            align-items: end;
+            flex-wrap: wrap;
+        }
+
+        .form-group {
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+        }
+
+        .form-group label {
+            font-weight: 500;
+            color: #333;
+            font-size: 0.9rem;
+        }
+
+        .form-group input {
+            padding: 0.6rem;
+            border: 2px solid #e9ecef;
+            border-radius: 6px;
+            font-size: 0.9rem;
+            transition: border-color 0.3s ease;
+        }
+
+        .form-group input:focus {
+            outline: none;
+            border-color: #dc3545;
+        }
+
+        /* Table Styles */
+        .table-container {
+            background: white;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            overflow: hidden;
+        }
+
+        .table-wrapper {
+            overflow-x: auto;
+        }
+
+        .waste-table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 0.9rem;
+        }
+
+        .waste-table th {
+            background: linear-gradient(135deg, #dc3545 0%, #c82333 100%);
+            color: white;
+            padding: 1rem 0.8rem;
+            text-align: left;
+            font-weight: 600;
+            white-space: nowrap;
+        }
+
+        .waste-table td {
+            padding: 1rem 0.8rem;
+            border-bottom: 1px solid #e9ecef;
+            vertical-align: middle;
+        }
+
+        .waste-table tbody tr:hover {
+            background-color: #f8f9fa;
+        }
+
+        .date-cell {
+            font-weight: 600;
+            color: #333;
+            min-width: 120px;
+        }
+
+        .date-cell .day-name {
+            font-size: 0.8rem;
+            color: #666;
+            display: block;
+        }
+
+        .today-badge {
+            background: #28a745;
+            color: white;
+            padding: 0.2rem 0.5rem;
+            border-radius: 12px;
+            font-size: 0.7rem;
+            margin-left: 0.5rem;
+        }
+
+        .waste-amount {
+            font-weight: 600;
+            text-align: center;
+        }
+
+        .waste-percentage {
+            font-size: 0.8rem;
+            color: #666;
+            display: block;
+        }
+
+        .status-badge {
+            padding: 0.3rem 0.8rem;
+            border-radius: 15px;
+            font-size: 0.8rem;
+            font-weight: 500;
+            text-align: center;
+            white-space: nowrap;
+        }
+
+        .status-recorded {
+            background: #d4edda;
+            color: #155724;
+        }
+
+        .status-missing {
+            background: #f8d7da;
+            color: #721c24;
+        }
+
+        .actions-cell {
+            text-align: center;
+            white-space: nowrap;
+        }
+
+        .btn-action {
+            padding: 0.3rem 0.6rem;
+            font-size: 0.8rem;
+            margin: 0 0.2rem;
+        }
+
+        /* Empty State */
+        .empty-state {
+            text-align: center;
+            padding: 3rem;
+            color: #666;
+        }
+
+        .empty-state h3 {
+            margin-bottom: 1rem;
+            color: #333;
+        }
+
+        /* Pagination */
+        .pagination-container {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 1.5rem;
+            background: white;
+            border-top: 1px solid #e9ecef;
+        }
+
+        .pagination-info {
+            color: #666;
+            font-size: 0.9rem;
+        }
+
+        .pagination-controls {
+            display: flex;
+            gap: 0.5rem;
+        }
+
+        /* Responsive Design */
+        @media (max-width: 768px) {
+            .container {
+                padding: 0 1rem;
+            }
+
+            .header-top {
+                flex-direction: column;
+                align-items: stretch;
+            }
+
+            .header-actions {
+                justify-content: center;
+            }
+
+            .filter-form {
+                flex-direction: column;
+            }
+
+            .stats-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+
+            .waste-table {
+                font-size: 0.8rem;
+            }
+
+            .waste-table th,
+            .waste-table td {
+                padding: 0.6rem 0.4rem;
+            }
+
+            .pagination-container {
+                flex-direction: column;
+                gap: 1rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Header -->
+    <div class="header">
+        <div class="header-content">
+            <h1>🍽️ Mess TV Admin</h1>
+            <div class="user-info">
+                <span>Welcome, <%= user.username %></span>
+                <a href="/admin/logout" class="logout-btn">Logout</a>
+            </div>
+        </div>
+    </div>
+
+    <div class="container">
+        <!-- Page Header -->
+        <div class="page-header">
+            <div class="header-top">
+                <h2 class="page-title">📊 Waste Data Management</h2>
+                <div class="header-actions">
+                    <a href="/admin/waste/date/<%= todayDate %>" class="btn btn-primary">
+                        📝 Add Today's Waste Data
+                    </a>
+                    <a href="/admin/waste/date/<%= getPreviousDayDate() %>" class="btn btn-primary">
+                        📅 Add Previous Day Data
+                    </a>
+                    <a href="/admin" class="btn btn-secondary">
+                        ← Back to Dashboard
+                    </a>
+                </div>
+            </div>
+
+            <!-- Statistics -->
+            <div class="stats-grid">
+                <div class="stat-card">
+                    <div class="stat-number"><%= stats.recordedDays %></div>
+                    <div class="stat-label">Total Records</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-number"><%= stats.totalWasteSum %> kg</div>
+                    <div class="stat-label">Total Waste</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-number"><%= stats.avgWastePerDay %> kg</div>
+                    <div class="stat-label">Avg Waste/Day</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-number"><%= dateRange.startDate %> to <%= dateRange.endDate %></div>
+                    <div class="stat-label">Date Range</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Date Range Filter -->
+        <div class="filter-section">
+            <form class="filter-form" method="GET">
+                <div class="form-group">
+                    <label for="startDate">Start Date</label>
+                    <input type="date" id="startDate" name="startDate" value="<%= dateRange.startDate %>">
+                </div>
+                <div class="form-group">
+                    <label for="endDate">End Date</label>
+                    <input type="date" id="endDate" name="endDate" value="<%= dateRange.endDate %>">
+                </div>
+                <div class="form-group">
+                    <button type="submit" class="btn btn-primary">Apply Filter</button>
+                </div>
+                <div class="form-group">
+                    <a href="/admin/waste" class="btn btn-outline">Reset</a>
+                </div>
+            </form>
+        </div>
+
+        <!-- Waste Data Table -->
+        <div class="table-container">
+            <div class="table-wrapper">
+                <% if (tableData.length > 0) { %>
+                <table class="waste-table">
+                    <thead>
+                        <tr>
+                            <th>Date</th>
+                            <th>Breakfast</th>
+                            <th>Lunch</th>
+                            <th>Snacks</th>
+                            <th>Dinner</th>
+                            <th>Total Waste</th>
+                            <th>Overall %</th>
+                            <th>Status</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <% tableData.forEach(row => { %>
+                        <tr>
+                            <td class="date-cell">
+                                <%= row.formattedDate %>
+                                <span class="day-name"><%= row.dayName %></span>
+                                <% if (row.isToday) { %>
+                                    <span class="today-badge">Today</span>
+                                <% } %>
+                            </td>
+                            <td class="waste-amount">
+                                <% if (row.hasData) { %>
+                                    <%= row.breakfastWaste %> kg
+                                    <span class="waste-percentage"><%= row.breakfastPercentage %>%</span>
+                                <% } else { %>
+                                    <span style="color: #ccc;">-</span>
+                                <% } %>
+                            </td>
+                            <td class="waste-amount">
+                                <% if (row.hasData) { %>
+                                    <%= row.lunchWaste %> kg
+                                    <span class="waste-percentage"><%= row.lunchPercentage %>%</span>
+                                <% } else { %>
+                                    <span style="color: #ccc;">-</span>
+                                <% } %>
+                            </td>
+                            <td class="waste-amount">
+                                <% if (row.hasData) { %>
+                                    <%= row.snacksWaste %> kg
+                                    <span class="waste-percentage"><%= row.snacksPercentage %>%</span>
+                                <% } else { %>
+                                    <span style="color: #ccc;">-</span>
+                                <% } %>
+                            </td>
+                            <td class="waste-amount">
+                                <% if (row.hasData) { %>
+                                    <%= row.dinnerWaste %> kg
+                                    <span class="waste-percentage"><%= row.dinnerPercentage %>%</span>
+                                <% } else { %>
+                                    <span style="color: #ccc;">-</span>
+                                <% } %>
+                            </td>
+                            <td class="waste-amount">
+                                <% if (row.hasData) { %>
+                                    <strong><%= row.totalWaste %> kg</strong>
+                                <% } else { %>
+                                    <span style="color: #ccc;">-</span>
+                                <% } %>
+                            </td>
+                            <td class="waste-amount">
+                                <% if (row.hasData) { %>
+                                    <strong><%= row.overallPercentage %>%</strong>
+                                <% } else { %>
+                                    <span style="color: #ccc;">-</span>
+                                <% } %>
+                            </td>
+                            <td>
+                                <span class="status-badge status-recorded">
+                                    ✅ Recorded
+                                </span>
+                            </td>
+                            <td class="actions-cell">
+                                <a href="/admin/waste/date/<%= row.dateStr %>" class="btn btn-primary btn-action">
+                                    <% if (row.hasData) { %>View<% } else { %>Add<% } %>
+                                </a>
+                            </td>
+                        </tr>
+                        <% }); %>
+                    </tbody>
+                </table>
+                <% } else { %>
+                <div class="empty-state">
+                    <h3>No waste data found</h3>
+                    <p>No waste data records found for the selected date range. Only dates with existing waste data are displayed.</p>
+                    <a href="/admin/waste/date/<%= todayDate %>" class="btn btn-primary">Add Today's Waste Data</a>
+                </div>
+                <% } %>
+            </div>
+
+            <!-- Pagination -->
+            <% if (pagination.totalPages > 1) { %>
+            <div class="pagination-container">
+                <div class="pagination-info">
+                    Page <%= pagination.currentPage %> of <%= pagination.totalPages %>
+                </div>
+                <div class="pagination-controls">
+                    <% if (pagination.hasPrevPage) { %>
+                        <a href="?page=<%= pagination.currentPage - 1 %>&startDate=<%= dateRange.startDate %>&endDate=<%= dateRange.endDate %>" class="btn btn-secondary btn-sm">← Previous</a>
+                    <% } %>
+                    <% if (pagination.hasNextPage) { %>
+                        <a href="?page=<%= pagination.currentPage + 1 %>&startDate=<%= dateRange.startDate %>&endDate=<%= dateRange.endDate %>" class="btn btn-secondary btn-sm">Next →</a>
+                    <% } %>
+                </div>
+            </div>
+            <% } %>
+        </div>
+    </div>
+
+
+</body>
+</html>

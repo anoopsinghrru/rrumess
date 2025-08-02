@@ -1,0 +1,219 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Mess TV Display System - Real-time menu and information display">
+    <meta name="theme-color" content="#0a0a0a">
+    <title><%= title %> - Mess TV Display</title>
+    <!-- Preload critical fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800;900&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <!-- Stylesheets -->
+    <link rel="stylesheet" href="/css/display.css">
+    <!-- Favicon -->
+    <link rel="icon" type="image/x-icon" href="/favicon.ico">
+</head>
+<body>
+    <!-- Main Display Container -->
+    <main class="display-container" role="main" aria-label="Mess TV Display System">
+        <!-- Vertically stacked sections -->
+        <section data-section="0" role="region" aria-label="Breakfast Menu">
+            <div class="section-content">
+                <header class="meal-banner" role="banner">
+                    <h1 class="meal-banner-text">Breakfast Menu</h1>
+                </header>
+                <div class="menu-grid" id="breakfast-menu-grid" role="grid" aria-label="Breakfast menu items">
+                    <!-- Breakfast items will be dynamically loaded here -->
+                    <div class="menu-card loading" aria-hidden="true">
+                        <div class="menu-card__image">🍳</div>
+                        <h3 class="menu-card__title">Loading...</h3>
+                        <p class="menu-card__description">Please wait while we load the breakfast menu</p>
+                        <div class="menu-card__nutrition">
+                            <div class="menu-card__nutrition-title">Nutrition Info</div>
+                            <div class="menu-card__nutrition-row">
+                                <span>Calories</span>
+                                <span class="menu-card__nutrition-value">--</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+        <section data-section="1" role="region" aria-label="Lunch Menu">
+            <div class="section-content">
+                <header class="meal-banner" role="banner">
+                    <h1 class="meal-banner-text">Lunch Menu</h1>
+                </header>
+                <div class="menu-grid" id="lunch-menu-grid" role="grid" aria-label="Lunch menu items">
+                    <!-- Lunch items will be dynamically loaded here -->
+                    <div class="menu-card loading" aria-hidden="true">
+                        <div class="menu-card__image">🍽️</div>
+                        <h3 class="menu-card__title">Loading...</h3>
+                        <p class="menu-card__description">Please wait while we load the lunch menu</p>
+                        <div class="menu-card__nutrition">
+                            <div class="menu-card__nutrition-title">Nutrition Info</div>
+                            <div class="menu-card__nutrition-row">
+                                <span>Calories</span>
+                                <span class="menu-card__nutrition-value">--</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+        <section data-section="2" role="region" aria-label="Snacks Menu">
+            <div class="section-content">
+                <header class="meal-banner" role="banner">
+                    <h1 class="meal-banner-text">Snacks Menu</h1>
+                </header>
+                <div class="menu-grid" id="snacks-menu-grid" role="grid" aria-label="Snacks menu items">
+                    <!-- Snacks items will be dynamically loaded here -->
+                    <div class="menu-card loading" aria-hidden="true">
+                        <div class="menu-card__image">🍿</div>
+                        <h3 class="menu-card__title">Loading...</h3>
+                        <p class="menu-card__description">Please wait while we load the snacks menu</p>
+                        <div class="menu-card__nutrition">
+                            <div class="menu-card__nutrition-title">Nutrition Info</div>
+                            <div class="menu-card__nutrition-row">
+                                <span>Calories</span>
+                                <span class="menu-card__nutrition-value">--</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+        <section data-section="3" role="region" aria-label="Dinner Menu">
+            <div class="section-content">
+                <header class="meal-banner" role="banner">
+                    <h1 class="meal-banner-text">Dinner Menu</h1>
+                </header>
+                <div class="menu-grid" id="dinner-menu-grid" role="grid" aria-label="Dinner menu items">
+                    <!-- Dinner items will be dynamically loaded here -->
+                    <div class="menu-card loading" aria-hidden="true">
+                        <div class="menu-card__image">🌙</div>
+                        <h3 class="menu-card__title">Loading...</h3>
+                        <p class="menu-card__description">Please wait while we load the dinner menu</p>
+                        <div class="menu-card__nutrition">
+                            <div class="menu-card__nutrition-title">Nutrition Info</div>
+                            <div class="menu-card__nutrition-row">
+                                <span>Calories</span>
+                                <span class="menu-card__nutrition-value">--</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+        <section data-section="4" role="region" aria-label="Food Waste Statistics">
+            <div class="section-content">
+                <header class="meal-banner" role="banner">
+                    <h1 class="meal-banner-text">Yesterday's Food Waste</h1>
+                </header>
+                <div class="waste-stats" role="region" aria-label="Waste statistics">
+                    <div class="waste-item" role="article">
+                        <h3 class="waste-category">Breakfast</h3>
+                        <div class="waste-amount" id="breakfast-waste" aria-live="polite">
+                            <span class="amount">-- kg</span>
+                            <span class="percentage">(--% of prepared)</span>
+                        </div>
+                    </div>
+                    <div class="waste-item" role="article">
+                        <h3 class="waste-category">Lunch</h3>
+                        <div class="waste-amount" id="lunch-waste" aria-live="polite">
+                            <span class="amount">-- kg</span>
+                            <span class="percentage">(--% of prepared)</span>
+                        </div>
+                    </div>
+                    <div class="waste-item" role="article">
+                        <h3 class="waste-category">Snacks</h3>
+                        <div class="waste-amount" id="snacks-waste" aria-live="polite">
+                            <span class="amount">-- kg</span>
+                            <span class="percentage">(--% of prepared)</span>
+                        </div>
+                    </div>
+                    <div class="waste-item" role="article">
+                        <h3 class="waste-category">Dinner</h3>
+                        <div class="waste-amount" id="dinner-waste" aria-live="polite">
+                            <span class="amount">-- kg</span>
+                            <span class="percentage">(--% of prepared)</span>
+                        </div>
+                    </div>
+                    <div class="total-waste" role="article">
+                        <h3 class="total-label">Total Waste</h3>
+                        <div class="total-amount" id="total-waste" aria-live="polite">-- kg</div>
+                    </div>
+                    <div class="waste-message" role="note">
+                        <span class="eco-icon" aria-hidden="true">🌱</span>
+                        <span>Let's reduce waste together!</span>
+                    </div>
+                </div>
+            </div>
+        </section>
+        <section data-section="5" role="region" aria-label="State Special Menu">
+            <div class="section-content">
+                <header class="meal-banner" role="banner">
+                    <h1 class="meal-banner-text" id="special-menu-banner">State Special Menu</h1>
+                </header>
+                <div class="menu-grid" id="special-menu-grid" role="grid" aria-label="Special menu items">
+                    <!-- Special menu items will be dynamically loaded here -->
+                    <div class="menu-card loading" aria-hidden="true">
+                        <div class="menu-card__image">🍛</div>
+                        <h3 class="menu-card__title">Loading...</h3>
+                        <p class="menu-card__description">Please wait while we load the special menu</p>
+                        <div class="menu-card__nutrition">
+                            <div class="menu-card__nutrition-title">Special Info</div>
+                            <div class="menu-card__nutrition-row">
+                                <span>State</span>
+                                <span class="menu-card__nutrition-value">--</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+        <section data-section="6" role="region" aria-label="Motivational Quote">
+            <div class="section-content">
+                <div class="quote-container" role="article">
+                    <blockquote class="quote-text" id="quote-text" aria-live="polite">
+                        "Loading inspirational quote..."
+                    </blockquote>
+                    <cite class="quote-author" id="quote-author">
+                        - Author
+                    </cite>
+                </div>
+            </div>
+        </section>
+        <!-- Loading Indicator -->
+        <div class="loading-indicator" id="loadingIndicator" role="status" aria-live="polite" aria-hidden="true">
+            <div class="loading-spinner" aria-hidden="true"></div>
+            <div class="loading-text">Loading data...</div>
+        </div>
+        <!-- Error Message -->
+        <div class="error-message" id="errorMessage" role="alert" aria-live="assertive" aria-hidden="true">
+            <div class="error-icon" aria-hidden="true">⚠️</div>
+            <div class="error-text">Unable to load data. Retrying...</div>
+        </div>
+        <!-- Status Bar -->
+        <footer class="status-bar" role="contentinfo" aria-live="polite">
+            <div class="status-time" id="statusTime"></div>
+            <div class="status-connection" id="statusConnection"></div>
+        </footer>
+        
+        <!-- Copyright Footer -->
+        <footer class="copyright-footer" role="contentinfo">
+            <div class="copyright-text">
+                © 2025 Anoop Singh. All rights reserved.
+            </div>
+        </footer>
+    </main>
+    <!-- JavaScript Polyfills -->
+    <script src="https://cdn.jsdelivr.net/npm/smoothscroll-polyfill@0.4.4/dist/smoothscroll.min.js"></script>
+    <script>smoothscroll.polyfill();</script>
+    <!-- JavaScript -->
+    <script src="/js/display.js" type="module"></script>
+    <script src="/js/autoScrollSections.js"></script>
+</body>
+</html> 

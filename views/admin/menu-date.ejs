@@ -1,0 +1,1021 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>
+        <%= title %> - Mess TV Menu Display
+    </title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #f5f5f5;
+            line-height: 1.6;
+        }
+
+        .header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 1rem 2rem;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+        }
+
+        .header-content {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+        .header h1 {
+            font-size: 1.8rem;
+            font-weight: 600;
+        }
+
+        .user-info {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .logout-btn {
+            background: rgba(255, 255, 255, 0.2);
+            color: white;
+            border: none;
+            padding: 0.5rem 1rem;
+            border-radius: 5px;
+            cursor: pointer;
+            text-decoration: none;
+            font-size: 0.9rem;
+            transition: background-color 0.3s ease;
+        }
+
+        .logout-btn:hover {
+            background: rgba(255, 255, 255, 0.3);
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 2rem auto;
+            padding: 0 2rem;
+        }
+
+        .page-header {
+            background: white;
+            border-radius: 10px;
+            padding: 2rem;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+            margin-bottom: 2rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 1rem;
+        }
+
+        .header-left {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .header-actions {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .back-btn {
+            background: #6c757d;
+            color: white;
+            border: none;
+            padding: 0.6rem 1rem;
+            border-radius: 6px;
+            cursor: pointer;
+            text-decoration: none;
+            font-size: 0.9rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            transition: all 0.3s ease;
+        }
+
+        .back-btn:hover {
+            background: #5a6268;
+            transform: translateY(-1px);
+        }
+
+        .page-title {
+            color: #333;
+            font-size: 1.8rem;
+            margin: 0;
+        }
+
+        .date-badge {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 0.5rem 1rem;
+            border-radius: 20px;
+            font-size: 0.9rem;
+            font-weight: 500;
+        }
+
+        .btn {
+            padding: 0.6rem 1.2rem;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 0.9rem;
+            font-weight: 500;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            transition: all 0.3s ease;
+        }
+
+        .btn-success {
+            background: #28a745;
+            color: white;
+        }
+
+        .btn-success:hover {
+            background: #218838;
+            transform: translateY(-1px);
+        }
+
+        .meals-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
+            gap: 2rem;
+            margin-bottom: 2rem;
+        }
+
+        .meal-section {
+            background: white;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+            overflow: hidden;
+        }
+
+        .meal-header {
+            padding: 1.5rem;
+            border-bottom: 1px solid #dee2e6;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .meal-title {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            font-size: 1.3rem;
+            font-weight: 600;
+            color: #333;
+            margin: 0;
+        }
+
+        .meal-count {
+            background: #e9ecef;
+            color: #495057;
+            padding: 0.3rem 0.8rem;
+            border-radius: 15px;
+            font-size: 0.8rem;
+            font-weight: 500;
+        }
+
+        .add-item-btn {
+            background: #28a745;
+            color: white;
+            border: none;
+            padding: 0.5rem 1rem;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 0.8rem;
+            display: flex;
+            align-items: center;
+            gap: 0.3rem;
+            transition: background-color 0.3s ease;
+        }
+
+        .add-item-btn:hover {
+            background: #218838;
+        }
+
+        .meal-items {
+            padding: 1.5rem;
+        }
+
+        .menu-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            padding: 1rem;
+            margin-bottom: 1rem;
+            background: #f8f9fa;
+            border-radius: 8px;
+            border-left: 4px solid #667eea;
+            transition: all 0.3s ease;
+        }
+
+        .menu-item:hover {
+            background: #e9ecef;
+            transform: translateX(5px);
+        }
+
+        .menu-item:last-child {
+            margin-bottom: 0;
+        }
+
+        .item-info {
+            flex: 1;
+        }
+
+        .item-name {
+            font-weight: 600;
+            color: #333;
+            margin-bottom: 0.3rem;
+            font-size: 1.1rem;
+        }
+
+        .item-description {
+            color: #666;
+            font-size: 0.9rem;
+            margin-bottom: 0.5rem;
+            line-height: 1.4;
+        }
+
+        .item-nutrition {
+            display: flex;
+            gap: 1rem;
+            font-size: 0.8rem;
+            color: #888;
+            flex-wrap: wrap;
+        }
+
+        .nutrition-item {
+            background: white;
+            padding: 0.2rem 0.5rem;
+            border-radius: 12px;
+            border: 1px solid #dee2e6;
+        }
+
+        .item-actions {
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+            margin-left: 1rem;
+        }
+
+        .btn-sm {
+            padding: 0.3rem 0.6rem;
+            font-size: 0.8rem;
+            min-width: 60px;
+        }
+
+        .btn-secondary {
+            background: #6c757d;
+            color: white;
+        }
+
+        .btn-danger {
+            background: #dc3545;
+            color: white;
+        }
+
+        .btn-info {
+            background: #17a2b8;
+            color: white;
+        }
+
+        .btn-info:hover {
+            background: #138496;
+        }
+
+        .btn-warning {
+            background: #ffc107;
+            color: #212529;
+        }
+
+        .btn-warning:hover {
+            background: #e0a800;
+        }
+
+        .empty-meal {
+            text-align: center;
+            padding: 2rem;
+            color: #666;
+            font-style: italic;
+        }
+
+        .empty-icon {
+            font-size: 3rem;
+            margin-bottom: 1rem;
+            opacity: 0.5;
+        }
+
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 1000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.5);
+        }
+
+        .modal-content {
+            background-color: white;
+            margin: 2% auto;
+            padding: 2rem;
+            border-radius: 10px;
+            width: 90%;
+            max-width: 600px;
+            max-height: 90vh;
+            overflow-y: auto;
+        }
+
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1.5rem;
+        }
+
+        .modal-title {
+            color: #333;
+            margin: 0;
+        }
+
+        .close {
+            color: #aaa;
+            font-size: 28px;
+            font-weight: bold;
+            cursor: pointer;
+        }
+
+        .close:hover {
+            color: #000;
+        }
+
+        .form-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 1rem;
+            margin-bottom: 1rem;
+        }
+
+        .form-group {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .form-label {
+            font-weight: 600;
+            color: #333;
+            margin-bottom: 0.5rem;
+        }
+
+        .form-input {
+            padding: 0.75rem;
+            border: 2px solid #ddd;
+            border-radius: 5px;
+            font-size: 1rem;
+            transition: border-color 0.3s ease;
+        }
+
+        .form-input:focus {
+            outline: none;
+            border-color: #667eea;
+        }
+
+        .form-textarea {
+            resize: vertical;
+            min-height: 80px;
+        }
+
+        .form-help {
+            color: #666;
+            font-size: 0.8rem;
+            margin-top: 0.25rem;
+        }
+
+        .copy-info {
+            background: #f8f9fa;
+            padding: 1rem;
+            border-radius: 5px;
+            margin-bottom: 1rem;
+        }
+
+        .copy-info p {
+            margin: 0.5rem 0;
+        }
+
+        .copy-options {
+            margin: 1rem 0;
+        }
+
+        .copy-options h4 {
+            margin-bottom: 0.5rem;
+            color: #333;
+        }
+
+        .option-group {
+            margin: 0.5rem 0;
+        }
+
+        .checkbox-label {
+            display: flex;
+            align-items: center;
+            cursor: pointer;
+            font-size: 0.9rem;
+        }
+
+        .checkbox-label input[type="checkbox"] {
+            margin-right: 0.5rem;
+        }
+
+        .warning-box {
+            background: #fff3cd;
+            border: 1px solid #ffeaa7;
+            border-radius: 5px;
+            padding: 1rem;
+            margin: 1rem 0;
+        }
+
+        .warning-box h4 {
+            color: #856404;
+            margin: 0 0 0.5rem 0;
+        }
+
+        .warning-box p {
+            color: #856404;
+            margin: 0;
+        }
+
+        .modal-footer {
+            display: flex;
+            justify-content: flex-end;
+            gap: 1rem;
+            margin-top: 2rem;
+            padding-top: 1rem;
+            border-top: 1px solid #dee2e6;
+        }
+
+        .nutrition-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+            gap: 1rem;
+        }
+
+        /* Mobile Responsive */
+        @media (max-width: 768px) {
+            .container {
+                padding: 0 1rem;
+                margin: 1rem auto;
+            }
+
+            .page-header {
+                flex-direction: column;
+                align-items: stretch;
+                text-align: center;
+            }
+
+            .header-left {
+                justify-content: center;
+            }
+
+            .meals-grid {
+                grid-template-columns: 1fr;
+                gap: 1rem;
+            }
+
+            .form-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .nutrition-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+
+            .item-nutrition {
+                flex-direction: column;
+                gap: 0.25rem;
+            }
+
+            .item-actions {
+                flex-direction: row;
+                margin-left: 0;
+                margin-top: 0.5rem;
+            }
+
+            .menu-item {
+                flex-direction: column;
+                align-items: stretch;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <header class="header">
+        <div class="header-content">
+            <h1>Menu for <%= selectedDate.toLocaleDateString('en-IN') %>
+            </h1>
+            <div class="user-info">
+                <span>Welcome, <%= user.username %></span>
+                <a href="/admin/logout" class="logout-btn">Logout</a>
+            </div>
+        </div>
+    </header>
+
+    <div class="container">
+        <div class="page-header">
+            <div class="header-left">
+                <a href="/admin/menu" class="back-btn">
+                    ← Back to Overview
+                </a>
+                <h2 class="page-title">
+                    <% if (isPastDate) { %>
+                        📖 View Menu
+                        <% } else { %>
+                            Daily Menu
+                            <% } %>
+                </h2>
+                <span class="date-badge <%= isPastDate ? 'past-date-badge' : '' %>">
+                    <%= selectedDate.toLocaleDateString('en-IN', { weekday: 'long' , year: 'numeric' , month: 'long' ,
+                        day: 'numeric' }) %>
+                        <% if (isPastDate) { %>
+                            (Past Date - Read Only)
+                            <% } %>
+                </span>
+            </div>
+            <% if (!isReadOnly) { %>
+                <div class="header-actions">
+                    <button onclick="showAddForm('general')" class="btn btn-success">
+                        ➕ Add Menu Item
+                    </button>
+                    <% if (menuItems.breakfast.length > 0 || menuItems.lunch.length > 0 || menuItems.snacks.length > 0 || menuItems.dinner.length > 0) { %>
+                        <button onclick="copyToNextDate('<%= formattedDate %>')" class="btn btn-info">
+                            📋 Copy to Next Date
+                        </button>
+                        <button onclick="copyToSpecificDate('<%= formattedDate %>')" class="btn btn-warning">
+                            📅 Copy to Date
+                        </button>
+                    <% } %>
+                </div>
+                <% } %>
+        </div>
+
+        <div class="meals-grid">
+            <!-- Breakfast Section -->
+            <div class="meal-section">
+                <div class="meal-header">
+                    <h3 class="meal-title">
+                        🌅 Breakfast
+                        <span class="meal-count">
+                            <%= menuItems.breakfast.length %> items
+                        </span>
+                    </h3>
+                    <% if (!isReadOnly) { %>
+                        <button onclick="showAddForm('breakfast')" class="add-item-btn">
+                            ➕ Add Item
+                        </button>
+                        <% } %>
+                </div>
+                <div class="meal-items">
+                    <% if (menuItems.breakfast && menuItems.breakfast.length> 0) { %>
+                        <% menuItems.breakfast.forEach(item=> { %>
+                            <div class="menu-item">
+                                <div class="item-info">
+                                    <div class="item-name">
+                                        <%= item.name %>
+                                    </div>
+                                    <% if (item.description) { %>
+                                        <div class="item-description">
+                                            <%= item.description %>
+                                        </div>
+                                        <% } %>
+                                            <div class="item-nutrition">
+                                                <% if (item.nutritionalInfo) { %>
+                                                    <span class="nutrition-item">Cal: <%= item.nutritionalInfo.calories
+                                                            %>kcal</span>
+                                                    <span class="nutrition-item">Protein: <%=
+                                                            item.nutritionalInfo.protein %>g</span>
+                                                    <span class="nutrition-item">Carbs: <%=
+                                                            item.nutritionalInfo.carbohydrates %>g</span>
+                                                    <span class="nutrition-item">Fat: <%= item.nutritionalInfo.fat %>
+                                                            g</span>
+                                                    <span class="nutrition-item">Fiber: <%= item.nutritionalInfo.fiber
+                                                            %>g</span>
+                                                    <% } else { %>
+                                                        <span class="nutrition-item nutrition-pending">Nutrition data
+                                                            pending</span>
+                                                        <% } %>
+                                            </div>
+                                </div>
+                                <% if (!isReadOnly) { %>
+                                    <div class="item-actions">
+                                        <button onclick="editItem('<%= item._id %>')"
+                                            class="btn btn-secondary btn-sm">Edit</button>
+                                        <button onclick="deleteItem('<%= item._id %>')"
+                                            class="btn btn-danger btn-sm">Delete</button>
+                                    </div>
+                                    <% } %>
+                            </div>
+                            <% }); %>
+                                <% } else { %>
+                                    <div class="empty-meal">
+                                        <div class="empty-icon">🍽️</div>
+                                        <p>
+                                            <%= isReadOnly ? 'No breakfast items were served'
+                                                : 'No breakfast items added yet' %>
+                                        </p>
+                                    </div>
+                                    <% } %>
+                </div>
+            </div>
+
+            <!-- Lunch Section -->
+            <div class="meal-section">
+                <div class="meal-header">
+                    <h3 class="meal-title">
+                        🌞 Lunch
+                        <span class="meal-count">
+                            <%= menuItems.lunch.length %> items
+                        </span>
+                    </h3>
+                    <% if (!isReadOnly) { %>
+                        <button onclick="showAddForm('lunch')" class="add-item-btn">
+                            ➕ Add Item
+                        </button>
+                        <% } %>
+                </div>
+                <div class="meal-items">
+                    <% if (menuItems.lunch && menuItems.lunch.length> 0) { %>
+                        <% menuItems.lunch.forEach(item=> { %>
+                            <div class="menu-item">
+                                <div class="item-info">
+                                    <div class="item-name">
+                                        <%= item.name %>
+                                    </div>
+                                    <% if (item.description) { %>
+                                        <div class="item-description">
+                                            <%= item.description %>
+                                        </div>
+                                        <% } %>
+                                            <div class="item-nutrition">
+                                                <% if (item.nutritionalInfo) { %>
+                                                    <span class="nutrition-item">Cal: <%= item.nutritionalInfo.calories
+                                                            %>kcal</span>
+                                                    <span class="nutrition-item">Protein: <%=
+                                                            item.nutritionalInfo.protein %>g</span>
+                                                    <span class="nutrition-item">Carbs: <%=
+                                                            item.nutritionalInfo.carbohydrates %>g</span>
+                                                    <span class="nutrition-item">Fat: <%= item.nutritionalInfo.fat %>
+                                                            g</span>
+                                                    <span class="nutrition-item">Fiber: <%= item.nutritionalInfo.fiber
+                                                            %>g</span>
+                                                    <% } else { %>
+                                                        <span class="nutrition-item nutrition-pending">Nutrition data
+                                                            pending</span>
+                                                        <% } %>
+                                            </div>
+                                </div>
+                                <% if (!isReadOnly) { %>
+                                    <div class="item-actions">
+                                        <button onclick="editItem('<%= item._id %>')"
+                                            class="btn btn-secondary btn-sm">Edit</button>
+                                        <button onclick="deleteItem('<%= item._id %>')"
+                                            class="btn btn-danger btn-sm">Delete</button>
+                                    </div>
+                                    <% } %>
+                            </div>
+                            <% }); %>
+                                <% } else { %>
+                                    <div class="empty-meal">
+                                        <div class="empty-icon">🍽️</div>
+                                        <p>
+                                            <%= isReadOnly ? 'No lunch items were served' : 'No lunch items added yet'
+                                                %>
+                                        </p>
+                                    </div>
+                                    <% } %>
+                </div>
+            </div>
+
+            <!-- Snacks Section -->
+            <div class="meal-section">
+                <div class="meal-header">
+                    <h3 class="meal-title">
+                        🍿 Snacks
+                        <span class="meal-count">
+                            <%= menuItems.snacks.length %> items
+                        </span>
+                    </h3>
+                    <% if (!isReadOnly) { %>
+                        <button onclick="showAddForm('snacks')" class="add-item-btn">
+                            ➕ Add Item
+                        </button>
+                        <% } %>
+                </div>
+                <div class="meal-items">
+                    <% if (menuItems.snacks && menuItems.snacks.length> 0) { %>
+                        <% menuItems.snacks.forEach(item=> { %>
+                            <div class="menu-item">
+                                <div class="item-info">
+                                    <div class="item-name">
+                                        <%= item.name %>
+                                    </div>
+                                    <% if (item.description) { %>
+                                        <div class="item-description">
+                                            <%= item.description %>
+                                        </div>
+                                        <% } %>
+                                            <div class="item-nutrition">
+                                                <% if (item.nutritionalInfo) { %>
+                                                    <span class="nutrition-item">Cal: <%= item.nutritionalInfo.calories
+                                                            %>kcal</span>
+                                                    <span class="nutrition-item">Protein: <%=
+                                                            item.nutritionalInfo.protein %>g</span>
+                                                    <span class="nutrition-item">Carbs: <%=
+                                                            item.nutritionalInfo.carbohydrates %>g</span>
+                                                    <span class="nutrition-item">Fat: <%= item.nutritionalInfo.fat %>
+                                                            g</span>
+                                                    <span class="nutrition-item">Fiber: <%= item.nutritionalInfo.fiber
+                                                            %>g</span>
+                                                    <% } else { %>
+                                                        <span class="nutrition-item nutrition-pending">Nutrition data
+                                                            pending</span>
+                                                        <% } %>
+                                            </div>
+                                </div>
+                                <% if (!isReadOnly) { %>
+                                    <div class="item-actions">
+                                        <button onclick="editItem('<%= item._id %>')"
+                                            class="btn btn-secondary btn-sm">Edit</button>
+                                        <button onclick="deleteItem('<%= item._id %>')"
+                                            class="btn btn-danger btn-sm">Delete</button>
+                                    </div>
+                                    <% } %>
+                            </div>
+                            <% }); %>
+                                <% } else { %>
+                                    <div class="empty-meal">
+                                        <div class="empty-icon">🍿</div>
+                                        <p>
+                                            <%= isReadOnly ? 'No snack items were served' : 'No snack items added yet'
+                                                %>
+                                        </p>
+                                    </div>
+                                    <% } %>
+                </div>
+            </div>
+
+            <!-- Dinner Section -->
+            <div class="meal-section">
+                <div class="meal-header">
+                    <h3 class="meal-title">
+                        🌙 Dinner
+                        <span class="meal-count">
+                            <%= menuItems.dinner.length %> items
+                        </span>
+                    </h3>
+                    <% if (!isReadOnly) { %>
+                        <button onclick="showAddForm('dinner')" class="add-item-btn">
+                            ➕ Add Item
+                        </button>
+                        <% } %>
+                </div>
+                <div class="meal-items">
+                    <% if (menuItems.dinner && menuItems.dinner.length> 0) { %>
+                        <% menuItems.dinner.forEach(item=> { %>
+                            <div class="menu-item">
+                                <div class="item-info">
+                                    <div class="item-name">
+                                        <%= item.name %>
+                                    </div>
+                                    <% if (item.description) { %>
+                                        <div class="item-description">
+                                            <%= item.description %>
+                                        </div>
+                                        <% } %>
+                                            <div class="item-nutrition">
+                                                <% if (item.nutritionalInfo) { %>
+                                                    <span class="nutrition-item">Cal: <%= item.nutritionalInfo.calories
+                                                            %>kcal</span>
+                                                    <span class="nutrition-item">Protein: <%=
+                                                            item.nutritionalInfo.protein %>g</span>
+                                                    <span class="nutrition-item">Carbs: <%=
+                                                            item.nutritionalInfo.carbohydrates %>g</span>
+                                                    <span class="nutrition-item">Fat: <%= item.nutritionalInfo.fat %>
+                                                            g</span>
+                                                    <span class="nutrition-item">Fiber: <%= item.nutritionalInfo.fiber
+                                                            %>g</span>
+                                                    <% } else { %>
+                                                        <span class="nutrition-item nutrition-pending">Nutrition data
+                                                            pending</span>
+                                                        <% } %>
+                                            </div>
+                                </div>
+                                <% if (!isReadOnly) { %>
+                                    <div class="item-actions">
+                                        <button onclick="editItem('<%= item._id %>')"
+                                            class="btn btn-secondary btn-sm">Edit</button>
+                                        <button onclick="deleteItem('<%= item._id %>')"
+                                            class="btn btn-danger btn-sm">Delete</button>
+                                    </div>
+                                    <% } %>
+                            </div>
+                            <% }); %>
+                                <% } else { %>
+                                    <div class="empty-meal">
+                                        <div class="empty-icon">🌙</div>
+                                        <p>
+                                            <%= isReadOnly ? 'No dinner items were served' : 'No dinner items added yet'
+                                                %>
+                                        </p>
+                                    </div>
+                                    <% } %>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Add Item Modal -->
+    <% if (!isReadOnly) { %>
+        <div id="addModal" class="modal">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h3 class="modal-title">Add Menu Item</h3>
+                    <span class="close" onclick="closeModal('addModal')">&times;</span>
+                </div>
+                <form action="/admin/menu" method="POST">
+                    <input type="hidden" name="date" value="<%= formattedDate %>">
+
+
+                    <div class="form-grid">
+                        <div class="form-group">
+                            <label class="form-label">Item Name *</label>
+                            <input type="text" name="name" class="form-input" required>
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">Category *</label>
+                            <select id="categorySelect" name="category" class="form-input" required>
+                                <option value="">Select Category</option>
+                                <option value="breakfast">🌅 Breakfast</option>
+                                <option value="lunch">🌞 Lunch</option>
+                                <option value="snacks">🍿 Snacks</option>
+                                <option value="dinner">🌙 Dinner</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label">Description</label>
+                        <textarea name="description" class="form-input form-textarea"
+                            placeholder="Brief description of the item"></textarea>
+                    </div>
+
+                    <div class="info-box"
+                        style="background: #e7f3ff; border: 1px solid #b3d9ff; border-radius: 5px; padding: 1rem; margin: 1rem 0;">
+                        <h4 style="margin: 0 0 0.5rem 0; color: #0066cc;">ℹ️ Nutrition Information</h4>
+                        <p style="margin: 0; color: #0066cc; font-size: 0.9rem;">
+                            Nutrition data will be added separately by the Nutrition Manager.
+                            This form is for basic menu item information only.
+                        </p>
+                    </div>
+
+                    <div style="margin-top: 2rem; display: flex; gap: 1rem; justify-content: flex-end;">
+                        <button type="button" onclick="closeModal('addModal')" class="btn btn-secondary">Cancel</button>
+                        <button type="submit" class="btn btn-success">Add Item</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+
+        <!-- Edit Item Modal -->
+        <div id="editModal" class="modal">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h3 class="modal-title">Edit Menu Item</h3>
+                    <span class="close" onclick="closeModal('editModal')">&times;</span>
+                </div>
+                <form id="editForm" method="POST">
+                    <input type="hidden" name="_method" value="PUT">
+                    <input type="hidden" name="date" value="<%= formattedDate %>">
+                    <input type="hidden" id="editItemId" name="itemId">
+
+                    <div class="form-grid">
+                        <div class="form-group">
+                            <label class="form-label">Item Name *</label>
+                            <input type="text" id="editName" name="name" class="form-input" required>
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">Category *</label>
+                            <select id="editCategorySelect" name="category" class="form-input" required>
+                                <option value="">Select Category</option>
+                                <option value="breakfast">🌅 Breakfast</option>
+                                <option value="lunch">🌞 Lunch</option>
+                                <option value="snacks">🍿 Snacks</option>
+                                <option value="dinner">🌙 Dinner</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label">Description</label>
+                        <textarea id="editDescription" name="description" class="form-input form-textarea"
+                            placeholder="Brief description of the item"></textarea>
+                    </div>
+
+                    <div class="info-box"
+                        style="background: #e7f3ff; border: 1px solid #b3d9ff; border-radius: 5px; padding: 1rem; margin: 1rem 0;">
+                        <h4 style="margin: 0 0 0.5rem 0; color: #0066cc;">ℹ️ Nutrition Information</h4>
+                        <p style="margin: 0; color: #0066cc; font-size: 0.9rem;">
+                            Nutrition data will be added separately by the Nutrition Manager.
+                            This form is for basic menu item information only.
+                        </p>
+                    </div>
+
+                    <div style="margin-top: 2rem; display: flex; gap: 1rem; justify-content: flex-end;">
+                        <button type="button" onclick="closeModal('editModal')"
+                            class="btn btn-secondary">Cancel</button>
+                        <button type="submit" class="btn btn-primary">Update Item</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+        <% } %>
+
+        <!-- Copy Menu Modal -->
+        <div id="copyModal" class="modal">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h3 class="modal-title">📋 Copy Menu Items</h3>
+                    <span class="close" onclick="closeModal('copyModal')">&times;</span>
+                </div>
+                <div class="modal-body">
+                    <div class="copy-info">
+                        <p><strong>Source Date:</strong> <span id="copySourceDate"></span></p>
+                        <p><strong>Items to Copy:</strong> <span id="copyItemCount"></span></p>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label class="form-label">Target Date *</label>
+                        <input type="date" id="copyTargetDate" class="form-input" required>
+                        <small class="form-help">Select the date where you want to copy the menu items</small>
+                    </div>
+
+                    <div class="copy-options">
+                        <h4>Copy Options:</h4>
+                        <div class="option-group">
+                            <label class="checkbox-label">
+                                <input type="checkbox" id="copyNutrition" checked>
+                                <span class="checkmark"></span>
+                                Include nutrition data
+                            </label>
+                        </div>
+                        <div class="option-group">
+                            <label class="checkbox-label">
+                                <input type="checkbox" id="copyDescription" checked>
+                                <span class="checkmark"></span>
+                                Include descriptions
+                            </label>
+                        </div>
+                    </div>
+
+                    <div class="warning-box" id="copyWarning" style="display: none;">
+                        <h4>⚠️ Warning</h4>
+                        <p>The target date already has menu items. Copying will replace existing items.</p>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" onclick="closeModal('copyModal')" class="btn btn-secondary">Cancel</button>
+                    <button type="button" onclick="executeCopy()" class="btn btn-success">Copy Menu Items</button>
+                </div>
+            </div>
+        </div>
+
+            <!-- External JavaScript -->
+            <script src="/js/menu-date.js"></script>
+            <script>
+                // Initialize with server data
+                document.addEventListener('DOMContentLoaded', function () {
+                    initializeMenuData(<% - JSON.stringify(menuItems) %>, <%= isReadOnly || false %>);
+                });
+
+            </script>
+</body>
+
+</html>
