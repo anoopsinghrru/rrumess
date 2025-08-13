@@ -8,6 +8,9 @@ const methodOverride = require('method-override');
 const fileUpload = require('express-fileupload');
 const path = require('path');
 const { DateTime } = require('luxon');
+const cron = require('node-cron');
+const https = require('https');
+const http = require('http');
 
 const app = express();
 const PORT = process.env.PORT || 3000;
@@ -162,11 +165,56 @@ app.use((error, req, res, next) => {
   }
 });
 
+// Self-ping function to keep Render app alive
+const selfPing = () => {
+  const url = process.env.RENDER_EXTERNAL_URL || `http://localhost:${PORT}`;
+  const protocol = url.startsWith('https') ? https : http;
+  
+  const options = {
+    method: 'GET',
+    timeout: 30000 // 30 second timeout
+  };
+  
+  const req = protocol.get(`${url}/health`, options, (res) => {
+    if (res.statusCode === 200) {
+      console.log(`✅ Self-ping successful at ${DateTime.now().setZone('Asia/Kolkata').toFormat('yyyy-MM-dd HH:mm:ss')}`);
+    } else {
+      console.log(`⚠️ Self-ping returned status: ${res.statusCode}`);
+    }
+  });
+  
+  req.on('error', (error) => {
+    console.log(`❌ Self-ping failed: ${error.message}`);
+  });
+  
+  req.on('timeout', () => {
+    console.log(`⏰ Self-ping timeout`);
+    req.destroy();
+  });
+};
+
 // Start server
 const server = app.listen(PORT, () => {
   console.log(`Server is running on port ${PORT}`);
   console.log(`Environment: ${process.env.NODE_ENV || 'development'}`);
   console.log(`Database: ${process.env.MONGODB_URI || 'mongodb://localhost:27017/mess-tv-menu-display'}`);
+  
+  // Only start self-ping in production (Render)
+  if (process.env.NODE_ENV === 'production' || process.env.RENDER_EXTERNAL_URL) {
+    // Schedule self-ping every 14 minutes to keep app alive
+    cron.schedule('*/14 * * * *', () => {
+      console.log('🔄 Running scheduled self-ping...');
+      selfPing();
+    });
+    
+    console.log('🚀 Self-ping scheduler activated - pinging every 14 minutes');
+    
+    // Initial ping after 2 minutes to ensure everything is working
+    setTimeout(() => {
+      console.log('🔄 Running initial self-ping...');
+      selfPing();
+    }, 120000); // 2 minutes
+  }
 });
 
 // Handle server errors
