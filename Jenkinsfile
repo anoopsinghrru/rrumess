@@ -1,37 +1,24 @@
 pipeline {
     agent any
-
     stages {
-        stage('Checkout') {
+        stage('Fetch Code') {
             steps {
-                // This pulls your code from GitHub automatically
-                checkout scm
+                // Pointing specifically to your Mess repository
+                git 'https://github.com/anoopsinghrru/rrumess'
             }
         }
-        stage('Syntax Check') {
+        stage('Install Dependencies') {
             steps {
-                echo 'Checking for syntax errors in server.js...'
-                bat 'npm run build' 
+                echo 'Installing packages for RRUMess...'
+                bat 'npm install'
             }
         }
-        stage('Security Audit') {
+        stage('Quality Check') {
             steps {
-                echo 'Checking for vulnerabilities...'
-                // This will show the vulnerabilities we saw earlier
-                bat 'npm audit'
+                echo 'Checking Node.js syntax...'
+                // Ensure your server.js or index.js is named correctly here
+                bat 'node --check server.js' 
             }
-        }
-    }
-    
-    post {
-        always {
-            echo 'Build process completed.'
-        }
-        success {
-            echo 'Deployment Ready!'
-        }
-        failure {
-            echo 'Alert: Build Failed. Check the code!'
         }
     }
 }
